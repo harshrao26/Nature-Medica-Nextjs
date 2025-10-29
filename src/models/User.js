@@ -1,27 +1,74 @@
 import mongoose from 'mongoose';
-
-const AddressSchema = new mongoose.Schema({
-  type: { type: String, enum: ['home', 'work', 'other'], default: 'home' },
-  street: { type: String, required: true },
-  city: { type: String, required: true },
-  state: { type: String, required: true },
-  pincode: { type: String, required: true },
-  phone: { type: String, required: true },
-  isDefault: { type: Boolean, default: false }
-});
+import bcrypt from 'bcryptjs';
 
 const UserSchema = new mongoose.Schema({
-  name: { type: String, required: true },
-  email: { type: String, required: true, unique: true },
-  password: { type: String },
-  phone: { type: String },
-  addresses: [AddressSchema],
-  role: { type: String, enum: ['customer', 'admin'], default: 'customer' },
-  googleId: { type: String },
-  verified: { type: Boolean, default: false },
-  verificationToken: { type: String },
-  resetPasswordToken: { type: String },
-  resetPasswordExpires: { type: Date }
-}, { timestamps: true });
+  name: { 
+    type: String, 
+    required: [true, 'Name is required']
+  },
+  email: { 
+    type: String, 
+    required: [true, 'Email is required'], 
+    unique: true, 
+    lowercase: true
+  },
+  phone: { 
+    type: String 
+  },
+  password: { 
+    type: String, 
+    required: [true, 'Password is required']
+  },
+  
+  // Email verification
+  isEmailVerified: { type: Boolean, default: false },
+  emailVerificationOTP: { type: String },
+  emailVerificationOTPExpires: { type: Date },
+  
+  // Password reset
+  resetPasswordOTP: { type: String },
+  resetPasswordOTPExpires: { type: Date },
+  
+  // Address
+  address: {
+    street: String,
+    city: String,
+    state: String,
+    pincode: String,
+    landmark: String
+  },
+  
+  // User preferences
+  role: { 
+    type: String, 
+    enum: ['customer', 'admin'], 
+    default: 'customer' 
+  },
+  isActive: { type: Boolean, default: true },
+  lastLogin: { type: Date }
+}, { 
+  timestamps: true,
+  collection: 'users' // Explicitly set collection name
+});
 
-export default mongoose.models.User || mongoose.model('User', UserSchema);
+// Compare password method
+UserSchema.methods.comparePassword = async function(candidatePassword) {
+  try {
+    return await bcrypt.compare(candidatePassword, this.password);
+  } catch (error) {
+    console.error('Password comparison error:', error);
+    return false;
+  }
+};
+
+// Generate OTP method
+UserSchema.methods.generateOTP = function() {
+  return Math.floor(100000 + Math.random() * 900000).toString();
+};
+
+// Clear the model from cache to avoid conflicts
+delete mongoose.models.User;
+
+const User = mongoose.model('User', UserSchema);
+
+export default User;

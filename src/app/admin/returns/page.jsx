@@ -1,5 +1,7 @@
 import connectDB from '@/lib/mongodb';
 import ReturnRequest from '@/models/ReturnRequest';
+import Order from '@/models/Order'; // Add this import
+import User from '@/models/User'; // Add this import
 import ReturnsTable from '@/components/admin/ReturnsTable';
 
 export default async function AdminReturnsPage({ searchParams }) {
@@ -10,6 +12,7 @@ export default async function AdminReturnsPage({ searchParams }) {
   const limit = 20;
   const skip = (page - 1) * limit;
 
+  // Build query
   let query = {};
   if (status !== 'all') {
     query.status = status;
@@ -26,7 +29,7 @@ export default async function AdminReturnsPage({ searchParams }) {
   const totalReturns = await ReturnRequest.countDocuments(query);
   const totalPages = Math.ceil(totalReturns / limit);
 
-  // Get counts for each status
+  // Get status counts
   const statusCounts = {
     all: await ReturnRequest.countDocuments(),
     pending: await ReturnRequest.countDocuments({ status: 'pending' }),
@@ -39,28 +42,16 @@ export default async function AdminReturnsPage({ searchParams }) {
   };
 
   return (
-    <div className="p-8">
-      <h1 className="text-3xl font-bold mb-8">Return & Exchange Requests</h1>
-
-      {/* Status Filter Tabs */}
-      <div className="mb-6 flex flex-wrap gap-2">
-        {Object.entries(statusCounts).map(([key, count]) => (
-          <a
-            key={key}
-            href={`?status=${key}`}
-            className={`px-4 py-2 rounded-lg font-semibold ${
-              status === key
-                ? 'bg-green-600 text-white'
-                : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-            }`}
-          >
-            {key.charAt(0).toUpperCase() + key.slice(1).replace('_', ' ')} ({count})
-          </a>
-        ))}
+    <div className='p-4 md:p-8 lg:p-8'>
+      <div className="mb-6">
+        <h1 className="text-3xl font-bold">Returns & Refunds</h1>
+        <p className="text-gray-600 mt-2">Manage customer return requests</p>
       </div>
 
-      <ReturnsTable 
+      <ReturnsTable
         returns={JSON.parse(JSON.stringify(returns))}
+        statusCounts={statusCounts}
+        currentStatus={status}
         currentPage={page}
         totalPages={totalPages}
       />

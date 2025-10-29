@@ -1,81 +1,108 @@
 import { NextResponse } from 'next/server';
-import connectDB from '@/lib/mongodb';
-import User from '@/models/User';
-import bcrypt from 'bcryptjs';
-import { signToken } from '@/lib/jwt';
-import { cookies } from 'next/headers';
+import { UserService } from '@/lib/userService';
+import jwt from 'jsonwebtoken';
 
 export async function POST(req) {
   try {
-    await connectDB();
-    
     const { email, password } = await req.json();
 
-    // Validate input
     if (!email || !password) {
-      return NextResponse.json(
-        { error: 'Email and password are required' },
-        { status: 400 }
-      );
+      return NextResponse.json({ 
+        error: 'Email and password required' 
+      }, { status: 400 });
     }
 
     // Find user
-    const user = await User.findOne({ email });
+    const user = await UserService.findUserByEmail(email);
+
     if (!user) {
-      return NextResponse.json(
-        { error: 'Invalid credentials' },
-        { status: 401 }
-      );
+      return NextResponse.json({ 
+        error: 'Invalid email or password' 
+      }, { status: 401 });
     }
 
-    // Check password
-    const isValidPassword = await bcrypt.compare(password, user.password);
-    if (!isValidPassword) {
-      return NextResponse.json(
-        { error: 'Invalid credentials' },
-        { status: 401 }
-      );
+    // DEBUG: Check what we got from database
+    console.log('User from DB:', {
+      email: user.email,
+      hasPassword: !!user.password,
+      passwordLength: user.password?.length,
+      isEmailVerified: user.isEmailVerified
+    });
+
+    // Check if password exists
+    if (!user.password) {
+      console.error('Password field missing in user document');
+      return NextResponse.json({ 
+        error: 'Account data corrupted. Please contact support.' 
+      }, { status: 500 });
     }
 
     // Check if verified
-    if (!user.verified) {
-      return NextResponse.json(
-        { error: 'Please verify your email first' },
-        { status: 403 }
-      );
+    if (!user.isEmailVerified) {
+      return NextResponse.json({ 
+        error: 'Please verify your email first',
+        requiresVerification: true,
+        email: user.email
+      }, { status: 403 });
     }
 
+    // Verify password
+    const isValid = await UserService.verifyPassword(password, user.password);
+
+    if (!isValid) {
+      return NextResponse.json({ 
+        error: 'Invalid email or password' 
+      }, { status: 401 });
+    }
+
+    // Check if active
+    if (!user.isActive) {
+      return NextResponse.json({ 
+        error: 'Account deactivated' 
+      }, { status: 403 });
+    }
+
+    // Update last login
+    await UserService.updateUser(user._id, {
+      lastLogin: new Date()
+    });
+
     // Generate JWT
-    const token = signToken({
-      userId: user._id,
-      email: user.email,
-      role: user.role
-    });
+    const token = jwt.sign(
+      { 
+        userId: user._id.toString(), 
+        email: user.email, 
+        role: user.role 
+      },
+      process.env.JWT_SECRET,
+      { expiresIn: '7d' }
+    );
 
-    // Set cookie
-    const cookieStore = cookies();
-    cookieStore.set('token', token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
-      maxAge: 7 * 24 * 60 * 60 // 7 days
-    });
-
-    return NextResponse.json({
-      success: true,
+    const response = NextResponse.json({ 
+      message: 'Login successful',
       user: {
-        id: user._id,
+        _id: user._id.toString(),
         name: user.name,
         email: user.email,
-        role: user.role
+        phone: user.phone,
+        role: user.role,
+        address: user.address
       }
     });
 
+    response.cookies.set('token', token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      maxAge: 7 * 24 * 60 * 60
+    });
+
+    return response;
+
   } catch (error) {
     console.error('Login error:', error);
-    return NextResponse.json(
-      { error: 'Login failed' },
-      { status: 500 }
-    );
+    return NextResponse.json({ 
+      error: 'Login failed. Please try again.' 
+    }, { status: 500 });
   }
 }

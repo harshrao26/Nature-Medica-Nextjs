@@ -7,6 +7,7 @@ import AddressForm from '@/components/customer/AddressForm';
 import OrderSummary from '@/components/customer/OrderSummary';
 import Script from 'next/script';
 import { clearCart } from '@/store/slices/cartSlice';
+import { FiMapPin, FiCreditCard, FiCheck, FiPlus, FiShield, FiTruck, FiPackage } from 'react-icons/fi';
 
 export default function CheckoutPage() {
   const router = useRouter();
@@ -22,7 +23,7 @@ export default function CheckoutPage() {
 
   useEffect(() => {
     if (!isAuthenticated) {
-      router.push('/login?redirect=/checkout');
+      router.push('/auth?redirect=/checkout');
     }
     if (items.length === 0) {
       router.push('/cart');
@@ -128,7 +129,7 @@ export default function CheckoutPage() {
             orderId: data.orderId
           },
           theme: {
-            color: '#059669'
+            color: '#415f2d'
           },
           modal: {
             ondismiss: function() {
@@ -162,6 +163,8 @@ export default function CheckoutPage() {
     return null;
   }
 
+  const finalPrice = totalPrice - discount;
+
   return (
     <>
       <Script
@@ -173,134 +176,347 @@ export default function CheckoutPage() {
         }}
       />
 
-      <div className="container mx-auto px-4 py-8">
-        <h1 className="text-3xl font-bold mb-8">Checkout</h1>
+      <div className="min-h-screen mt-2 bg-gray-50">
+        {/* Header */}
+       
 
-        <div className="grid lg:grid-cols-3 gap-8">
-          <div className="lg:col-span-2 space-y-6">
-            {/* Delivery Address */}
-            <div className="bg-white rounded-lg shadow p-6">
-              <div className="flex justify-between items-center mb-4">
-                <h2 className="text-xl font-bold">Delivery Address</h2>
-                <button
-                  onClick={() => setShowAddressForm(!showAddressForm)}
-                  className="text-green-600 hover:text-green-700 font-semibold"
-                >
-                  {showAddressForm ? 'Cancel' : '+ Add New'}
-                </button>
+        {/* Progress Steps */}
+        <div className="bg-white border-b border-gray-100">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2">
+            <div className="flex items-center justify-center gap-2">
+              <div className="flex items-center gap-1">
+                <div className="w-5 h-5 rounded-full bg-[#415f2d] text-white flex items-center justify-center text-[10px] font-medium">
+                  <FiCheck />
+                </div>
+                <span className="text-[10px] font-medium text-gray-900">Cart</span>
               </div>
+              <div className="w-8 h-0.5 bg-[#415f2d]"></div>
+              <div className="flex items-center gap-1">
+                <div className="w-5 h-5 rounded-full bg-[#415f2d] text-white flex items-center justify-center text-[10px] font-medium">
+                  2
+                </div>
+                <span className="text-[10px] font-medium text-gray-900">Checkout</span>
+              </div>
+              <div className="w-8 h-0.5 bg-gray-200"></div>
+              <div className="flex items-center gap-1">
+                <div className="w-5 h-5 rounded-full bg-gray-200 text-gray-500 flex items-center justify-center text-[10px] font-medium">
+                  3
+                </div>
+                <span className="text-[10px] font-medium text-gray-500">Complete</span>
+              </div>
+            </div>
+          </div>
+        </div>
 
-              {showAddressForm && (
-                <AddressForm 
-                  onSuccess={() => setShowAddressForm(false)}
-                />
-              )}
-
-              {!showAddressForm && (
-                <div className="space-y-3">
-                  {user.addresses?.length === 0 ? (
-                    <p className="text-gray-600">No saved addresses. Please add one.</p>
-                  ) : (
-                    user.addresses?.map((address, index) => (
-                      <div
-                        key={index}
-                        onClick={() => setSelectedAddress(address)}
-                        className={`p-4 border-2 rounded-lg cursor-pointer transition ${
-                          selectedAddress === address
-                            ? 'border-green-600 bg-green-50'
-                            : 'border-gray-200 hover:border-green-300'
-                        }`}
-                      >
-                        <div className="flex items-start justify-between">
-                          <div>
-                            <p className="font-semibold text-gray-800 uppercase">{address.type}</p>
-                            <p className="text-gray-700">{address.street}</p>
-                            <p className="text-gray-700">
-                              {address.city}, {address.state} - {address.pincode}
-                            </p>
-                            <p className="text-gray-700">Phone: {address.phone}</p>
-                          </div>
-                          <input
-                            type="radio"
-                            checked={selectedAddress === address}
-                            onChange={() => setSelectedAddress(address)}
-                            className="mt-1"
-                          />
-                        </div>
+        {/* Main Content */}
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 lg:py-6">
+          <div className="grid lg:grid-cols-3 gap-3">
+            <div className="lg:col-span-2 space-y-3">
+              {/* Delivery Address Section */}
+              <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+                <div className="p-3 border-b border-gray-100">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-1">
+                      <div className="w-6 h-6 rounded-full bg-[#415f2d] bg-opacity-10 flex items-center justify-center">
+                        <FiMapPin className="text-[#ffffff] text-xs" />
                       </div>
-                    ))
+                      <div>
+                        <h2 className="text-sm font-semibold text-gray-900">Delivery Address</h2>
+                        <p className="text-[10px] text-gray-500">Where should we deliver your order?</p>
+                      </div>
+                    </div>
+                    <button
+                      onClick={() => setShowAddressForm(!showAddressForm)}
+                      className="inline-flex items-center gap-1 text-[#415f2d] hover:text-[#344b24] font-medium transition-colors text-[10px]"
+                    >
+                      <FiPlus className="text-xs" />
+                      {showAddressForm ? 'Cancel' : 'Add New'}
+                    </button>
+                  </div>
+                </div>
+
+                <div className="p-3">
+                  {showAddressForm && (
+                    <div className="mb-3">
+                      <AddressForm 
+                        onSuccess={() => setShowAddressForm(false)}
+                      />
+                    </div>
+                  )}
+
+                  {!showAddressForm && (
+                    <div className="space-y-2">
+                      {user.addresses?.length === 0 ? (
+                        <div className="text-center py-4">
+                          <FiMapPin className="mx-auto text-2xl text-gray-300 mb-1" />
+                          <p className="text-gray-600 mb-2 text-[10px]">No saved addresses. Please add one.</p>
+                          <button
+                            onClick={() => setShowAddressForm(true)}
+                            className="inline-flex items-center gap-1 bg-[#415f2d] text-white px-3 py-1.5 rounded-lg hover:bg-[#344b24] transition-all font-medium text-[10px]"
+                          >
+                            <FiPlus />
+                            Add Address
+                          </button>
+                        </div>
+                      ) : (
+                        user.addresses?.map((address, index) => (
+                          <div
+                            key={index}
+                            onClick={() => setSelectedAddress(address)}
+                            className={`relative p-2 border-2 rounded-xl cursor-pointer transition-all duration-200 ${
+                              selectedAddress === address
+                                ? 'border-[#415f2d] bg-[#415f2d2b] bg-opacity-5 shadow-sm'
+                                : 'border-gray-200 hover:border-gray-300 hover:shadow-sm'
+                            }`}
+                          >
+                            <div className="flex items-start justify-between gap-2">
+                              <div className="flex-1">
+                                <div className="flex items-center gap-1 mb-1">
+                                  <span className={`inline-block px-2 py-0.5 rounded-full text-[8px] font-medium uppercase ${
+                                    selectedAddress === address 
+                                      ? 'bg-[#415f2d] text-white' 
+                                      : 'bg-gray-100 text-gray-700'
+                                  }`}>
+                                    {address.type}
+                                  </span>
+                                  {address.isDefault && (
+                                    <span className="inline-block px-2 py-0.5 rounded-full text-[8px] font-medium bg-blue-50 text-blue-700">
+                                      Default
+                                    </span>
+                                  )}
+                                </div>
+                                <p className="text-gray-800 font-medium mb-0.5 text-[10px]">{address.street}</p>
+                                <p className="text-gray-600 text-[10px]">
+                                  {address.city}, {address.state} - {address.pincode}
+                                </p>
+                                <p className="text-gray-600 text-[10px] mt-1">
+                                  <span className="font-medium">Phone:</span> {address.phone}
+                                </p>
+                              </div>
+                              <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0 mt-1 ${
+                                selectedAddress === address
+                                  ? 'border-[#415f2d] bg-[#415f2d]'
+                                  : 'border-gray-300'
+                              }`}>
+                                {selectedAddress === address && (
+                                  <FiCheck className="text-white text-[10px]" />
+                                )}
+                              </div>
+                            </div>
+                          </div>
+                        ))
+                      )}
+                    </div>
                   )}
                 </div>
-              )}
+              </div>
+
+              {/* Payment Method Section */}
+              <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+                <div className="p-3 border-b border-gray-100">
+                  <div className="flex items-center gap-1">
+                    <div className="w-6 h-6 rounded-full bg-[#415f2d] bg-opacity-10 flex items-center justify-center">
+                      <FiCreditCard className="text-[#ffffff] text-xs" />
+                    </div>
+                    <div>
+                      <h2 className="text-sm font-semibold text-gray-900">Payment Method</h2>
+                      <p className="text-[10px] text-gray-500">Choose your preferred payment option</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="p-3 space-y-2">
+                  {/* Online Payment */}
+                  <label 
+                    className={`block p-2 border-2 rounded-xl cursor-pointer transition-all duration-200 ${
+                      paymentMode === 'online' 
+                        ? 'border-[#415f2d] bg-[#415f2d2a] bg-opacity-5 shadow-sm' 
+                        : 'border-gray-200 hover:border-gray-300 hover:shadow-sm'
+                    }`}
+                  >
+                    <div className="flex items-start gap-2">
+                      <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0 mt-0.5 ${
+                        paymentMode === 'online'
+                          ? 'border-[#415f2d] bg-[#415f2d]'
+                          : 'border-gray-300'
+                      }`}>
+                        {paymentMode === 'online' && (
+                          <div className="w-2.5 h-2.5 rounded-full bg-white"></div>
+                        )}
+                      </div>
+                      <input
+                        type="radio"
+                        name="payment"
+                        value="online"
+                        checked={paymentMode === 'online'}
+                        onChange={(e) => setPaymentMode(e.target.value)}
+                        className="sr-only"
+                      />
+                      <div className="flex-1">
+                        <div className="flex items-start justify-between mb-1">
+                          <div>
+                            <p className="font-semibold text-gray-900 mb-0.5 text-[10px]">Online Payment</p>
+                            <p className="text-[10px] text-gray-600">Pay using UPI, Cards, Net Banking, Wallets</p>
+                          </div>
+                          <div className="flex items-center gap-1 bg-blue-50 px-1.5 py-0.5 rounded-md">
+                            <span className="text-[8px] text-gray-600">Powered by</span>
+                            <span className="text-[10px] text-blue-600 font-bold">Razorpay</span>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-1 text-green-600 text-[10px]">
+                          <FiShield className="text-xs" />
+                          <span>Secure and instant payment confirmation</span>
+                        </div>
+                      </div>
+                    </div>
+                  </label>
+
+                  {/* Cash on Delivery */}
+                  <label 
+                    className={`block p-2 border-2 rounded-xl cursor-pointer transition-all duration-200 ${
+                      paymentMode === 'cod' 
+                        ? 'border-[#415f2d] bg-[#415f2d3c] bg-opacity-5 shadow-sm' 
+                        : 'border-gray-200 hover:border-gray-300 hover:shadow-sm'
+                    }`}
+                  >
+                    <div className="flex items-start gap-2">
+                      <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0 mt-0.5 ${
+                        paymentMode === 'cod'
+                          ? 'border-[#415f2d] bg-[#415f2d]'
+                          : 'border-gray-300'
+                      }`}>
+                        {paymentMode === 'cod' && (
+                          <div className="w-2.5 h-2.5 rounded-full bg-white"></div>
+                        )}
+                      </div>
+                      <input
+                        type="radio"
+                        name="payment"
+                        value="cod"
+                        checked={paymentMode === 'cod'}
+                        onChange={(e) => setPaymentMode(e.target.value)}
+                        className="sr-only"
+                      />
+                      <div className="flex-1">
+                        <p className="font-semibold text-gray-900 mb-0.5 text-[10px]">Cash on Delivery</p>
+                        <p className="text-[10px] text-gray-600">Pay when you receive the order</p>
+                      </div>
+                    </div>
+                  </label>
+
+                  {paymentMode === 'online' && !razorpayLoaded && (
+                    <div className="flex items-center gap-1 p-2 bg-yellow-50 border border-yellow-200 rounded-xl">
+                      <div className="w-3 h-3 border-2 border-yellow-600 border-t-transparent rounded-full animate-spin"></div>
+                      <p className="text-[10px] text-yellow-800 font-medium">Loading payment gateway...</p>
+                    </div>
+                  )}
+                </div>
+              </div>
             </div>
 
-            {/* Payment Method */}
-            <div className="bg-white rounded-lg shadow p-6">
-              <h2 className="text-xl font-bold mb-4">Payment Method</h2>
-              
-              <div className="space-y-3">
-                <label className={`flex items-center p-4 border-2 rounded-lg cursor-pointer transition ${
-                  paymentMode === 'online' ? 'border-green-600 bg-green-50' : 'border-gray-200 hover:border-green-300'
-                }`}>
-                  <input
-                    type="radio"
-                    name="payment"
-                    value="online"
-                    checked={paymentMode === 'online'}
-                    onChange={(e) => setPaymentMode(e.target.value)}
-                    className="mr-3"
-                  />
-                  <div className="flex-1">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="font-semibold">Online Payment</p>
-                        <p className="text-sm text-gray-600">Pay using UPI, Cards, Net Banking, Wallets</p>
-                        <p className="text-xs text-green-600 mt-1">✓ Order placed only after successful payment</p>
+            {/* Order Summary Sidebar */}
+            <div className="lg:col-span-1">
+              <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden sticky top-4">
+                <div className="p-3 border-b border-gray-100">
+                  <h2 className="text-sm font-semibold text-gray-900">Order Summary</h2>
+                </div>
+
+                <div className="p-3 space-y-2">
+                  {/* Order Items */}
+                  <div className="space-y-2 max-h-64 overflow-y-auto">
+                    {items.map((item, index) => (
+                      <div key={index} className="flex gap-1">
+                        <div className="relative w-10 h-10 rounded-lg overflow-hidden bg-gray-50 flex-shrink-0">
+                          <img
+                            src={item.product.images[0]?.url || '/placeholder.png'}
+                            alt={item.product.title}
+                            className="w-full h-full object-cover"
+                          />
+                          <div className="absolute -top-1 -right-1 w-4 h-4 bg-[#415f2d] text-white rounded-full flex items-center justify-center text-[8px] font-medium">
+                            {item.quantity}
+                          </div>
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <h4 className="text-[10px] font-medium text-gray-900 line-clamp-1">
+                            {item.product.title}
+                          </h4>
+                          {item.variant && (
+                            <p className="text-[8px] text-gray-500">{item.variant}</p>
+                          )}
+                          <p className="text-[10px] font-semibold text-gray-900 mt-0.5">
+                            ₹{(item.price * item.quantity).toLocaleString('en-IN')}
+                          </p>
+                        </div>
                       </div>
-                      <div className="flex items-center gap-1">
-                        <span className="text-xs text-gray-500">Powered by</span>
-                        <span className="text-blue-600 font-bold">Razorpay</span>
+                    ))}
+                  </div>
+
+                  {/* Price Breakdown */}
+                  <div className="space-y-2 pt-2 border-t border-gray-100">
+                    <div className="flex justify-between text-gray-600 text-[10px]">
+                      <span>Subtotal</span>
+                      <span className="font-medium">₹{totalPrice.toLocaleString('en-IN')}</span>
+                    </div>
+
+                    {discount > 0 && (
+                      <div className="flex justify-between text-green-600 text-[10px]">
+                        <span>Discount {couponCode && `(${couponCode})`}</span>
+                        <span className="font-medium">-₹{discount.toLocaleString('en-IN')}</span>
+                      </div>
+                    )}
+
+                    <div className="flex justify-between text-gray-600 text-[10px]">
+                      <span>Shipping</span>
+                      <span className="font-medium text-green-600">FREE</span>
+                    </div>
+
+                    <div className="pt-2 border-t border-gray-200">
+                      <div className="flex justify-between items-baseline">
+                        <span className="text-xs font-semibold text-gray-900">Total</span>
+                        <span className="text-base font-bold text-gray-900">
+                          ₹{finalPrice.toLocaleString('en-IN')}
+                        </span>
                       </div>
                     </div>
                   </div>
-                </label>
 
-                <label className={`flex items-center p-4 border-2 rounded-lg cursor-pointer transition ${
-                  paymentMode === 'cod' ? 'border-green-600 bg-green-50' : 'border-gray-200 hover:border-green-300'
-                }`}>
-                  <input
-                    type="radio"
-                    name="payment"
-                    value="cod"
-                    checked={paymentMode === 'cod'}
-                    onChange={(e) => setPaymentMode(e.target.value)}
-                    className="mr-3"
-                  />
-                  <div>
-                    <p className="font-semibold">Cash on Delivery</p>
-                    <p className="text-sm text-gray-600">Pay when you receive the order</p>
+                  {/* Place Order Button */}
+                  <button
+                    onClick={handlePlaceOrder}
+                    disabled={loading || !selectedAddress}
+                    className="w-full bg-[#415f2d] text-white py-2 rounded-xl hover:bg-[#344b24] disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 font-semibold text-xs shadow-sm hover:shadow-md flex items-center justify-center gap-1"
+                  >
+                    {loading ? (
+                      <>
+                        <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                        <span className="text-[10px]">Processing...</span>
+                      </>
+                    ) : (
+                      <>
+                        <FiShield className="text-xs" />
+                        <span className="text-[10px]">Place Order</span>
+                      </>
+                    )}
+                  </button>
+
+                  {/* Trust Badges */}
+                  <div className="pt-2 space-y-1 border-t border-gray-100">
+                    <div className="flex items-center gap-1 text-[10px] text-gray-600">
+                      <FiShield className="text-green-600" />
+                      <span>100% secure payments</span>
+                    </div>
+                    <div className="flex items-center gap-1 text-[10px] text-gray-600">
+                      <FiTruck className="text-green-600" />
+                      <span>Free shipping on all orders</span>
+                    </div>
+                    <div className="flex items-center gap-1 text-[10px] text-gray-600">
+                      <FiPackage className="text-green-600" />
+                      <span>Easy returns within 30 days</span>
+                    </div>
                   </div>
-                </label>
-              </div>
-
-              {paymentMode === 'online' && !razorpayLoaded && (
-                <div className="mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded">
-                  <p className="text-sm text-yellow-800">Loading payment gateway...</p>
                 </div>
-              )}
+              </div>
             </div>
-          </div>
-
-          <div className="lg:col-span-1">
-            <OrderSummary
-              items={items}
-              totalPrice={totalPrice}
-              discount={discount}
-              couponCode={couponCode}
-              onPlaceOrder={handlePlaceOrder}
-              loading={loading}
-              disabled={!selectedAddress}
-            />
           </div>
         </div>
       </div>

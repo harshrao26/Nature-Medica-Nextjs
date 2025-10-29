@@ -73,5 +73,61 @@ export async function deleteImage(publicId) {
     console.error('❌ Delete error:', error);
   }
 }
+ 
+
+/**
+ * Upload single image (base64 data URI)
+ * @param {string} dataUri - Base64 data URI (e.g., "image/jpeg;base64,...")
+ * @param {string} folder - Cloudinary folder
+ * @returns {Promise<{url: string, publicId: string}>}
+ */
+export async function uploadImage(dataUri, folder = 'products') {
+  try {
+    const result = await cloudinary.uploader.upload(dataUri, {
+      folder: `naturemedica/${folder}`,
+      resource_type: 'auto',
+      transformation: [
+        { width: 1200, height: 1200, crop: 'limit' },
+        { quality: 'auto', fetch_format: 'auto' }
+      ]
+    });
+
+    return {
+      url: result.secure_url,
+      publicId: result.public_id
+    };
+  } catch (error) {
+    console.error('Cloudinary upload error:', error);
+    throw new Error(`Image upload failed: ${error.message}`);
+  }
+}
+
+/**
+ * Upload multiple images
+ * @param {string[]} dataUris - Array of base64 data URIs
+ * @param {string} folder - Cloudinary folder
+ * @returns {Promise<Array<{url: string, publicId: string}>>}
+ */
+export async function uploadMultipleImages(dataUris, folder = 'products') {
+  try {
+    if (!Array.isArray(dataUris) || dataUris.length === 0) {
+      return [];
+    }
+
+    console.log(`Uploading ${dataUris.length} images...`);
+
+    const uploadPromises = dataUris.map(dataUri => uploadImage(dataUri, folder));
+    const results = await Promise.all(uploadPromises);
+
+    console.log(`✅ Uploaded ${results.length} images`);
+    return results;
+
+  } catch (error) {
+    console.error('Multiple upload error:', error);
+    throw new Error(`Multiple image upload failed: ${error.message}`);
+  }
+}
+
+
 
 export default cloudinary;

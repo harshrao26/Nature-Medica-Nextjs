@@ -43,7 +43,7 @@ export default function ProductInfo({ product }) {
 
       <div className="mb-6">
         <div className="flex items-baseline gap-3 mb-2">
-          <span className="text-4xl font-bold text-green-600">₹{currentPrice}</span>
+            <span className="text-4xl font-bold text-[#3A5D1E]">₹{currentPrice}</span>
           {product.mrp > currentPrice && (
             <>
               <span className="text-2xl text-gray-400 line-through">₹{product.mrp}</span>
@@ -66,8 +66,8 @@ export default function ProductInfo({ product }) {
                 onClick={() => setSelectedVariant(variant)}
                 className={`px-4 py-2 border-2 rounded-lg ${
                   selectedVariant === variant
-                    ? 'border-green-600 bg-green-50'
-                    : 'border-gray-200 hover:border-green-300'
+                      ? 'border-[#3A5D1E] bg-[#3A5D1E] text-white'
+                      : 'border-gray-200 hover:border-[#3A5D1E]'
                 }`}
               >
                 {variant.name}: {variant.value}
@@ -105,10 +105,10 @@ export default function ProductInfo({ product }) {
           disabled={adding || currentStock === 0}
           className={`w-full py-4 rounded-lg font-semibold flex items-center justify-center gap-2 ${
             adding
-              ? 'bg-green-700 text-white'
+                ? 'bg-[#3A5D1E] text-white'
               : currentStock === 0
               ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-              : 'bg-green-600 text-white hover:bg-green-700'
+                : 'bg-[#3A5D1E] text-white hover:bg-['
           }`}
         >
           {adding ? (
@@ -131,7 +131,7 @@ export default function ProductInfo({ product }) {
           <li><strong>Brand:</strong> {product.brand}</li>
           <li><strong>Category:</strong> {product.category.name}</li>
           {currentStock > 0 ? (
-            <li className="text-green-600"><strong>Availability:</strong> In Stock</li>
+              <li className="text-[#3A5D1E]"><strong>Availability:</strong> In Stock</li>
           ) : (
             <li className="text-red-600"><strong>Availability:</strong> Out of Stock</li>
           )}

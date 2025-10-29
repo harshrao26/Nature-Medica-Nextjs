@@ -70,17 +70,17 @@ export default function HeroBanner({ banners }) {
           {banner.link ? (
             <Link href={banner.link} className="block w-full h-full">
               <div className="relative w-full h-full">
-                <img
+                <Image
                   src={banner.image.url}
                   alt={banner.title || 'Banner'}
                   fill
-                  className="object-cover"
+                  className="object-cover w-full h-full"
                   priority={index === 0}
                   quality={90}
                 />
                 
               {/* Overlay with text */}
-              {(banner.title || banner.subtitle) && (
+              {/* {(banner.title || banner.subtitle) && (
                 <div className="absolute inset-0 bg-gradient-to-r from-black/60 to-transparent flex items-center">
                   <div className="container mx-auto px-4 sm:px-6 md:px-8">
                     <div className="max-w-2xl text-white">
@@ -100,22 +100,22 @@ export default function HeroBanner({ banners }) {
                     </div>
                   </div>
                 </div>
-              )}
+              )} */}
               </div>
             </Link>
           ) : (
             <div className="relative w-full h-full">
-              <img
+              <Image
                 src={banner.image.url}
                 alt={banner.title || 'Banner'}
                 fill
-                className="object-cover"
+                className="object-cover w-full h-full"
                 priority={index === 0}
                 quality={90}
               />
               
               {/* Overlay with text */}
-              {(banner.title || banner.subtitle) && (
+              {/* {(banner.title || banner.subtitle) && (
                 <div className="absolute inset-0 bg-gradient-to-r from-black/60 to-transparent flex items-center">
                   <div className="container mx-auto px-4 md:px-8">
                     <div className="max-w-2xl text-white">
@@ -132,7 +132,7 @@ export default function HeroBanner({ banners }) {
                     </div>
                   </div>
                 </div>
-              )}
+              )} */}
             </div>
           )}
         </div>
@@ -178,7 +178,7 @@ export default function HeroBanner({ banners }) {
       )}
 
       {/* Auto-play indicator */}
-      {banners.length > 1 && (
+      {/* {banners.length > 1 && (
         <div className="absolute top-4 right-4 z-20">
           <button
             onClick={() => setIsAutoPlaying(!isAutoPlaying)}
@@ -196,7 +196,7 @@ export default function HeroBanner({ banners }) {
             )}
           </button>
         </div>
-      )}
+      )} */}
     </div>
   );
 }

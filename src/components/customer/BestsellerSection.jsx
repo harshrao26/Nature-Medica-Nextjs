@@ -1,5 +1,135 @@
-import ProductGrid from './ProductGrid';
+'use client';
 
-export default function BestsellerSection({ products }) {
-  return <ProductGrid products={products} />;
+import { useState, useEffect, useRef } from 'react';
+import ProductCard from '@/components/customer/ProductCard';
+import { FiChevronLeft, FiChevronRight } from 'react-icons/fi';
+
+export default function BestSellerSection({ products }) {
+  const scrollContainerRef = useRef(null);
+  const [canScrollLeft, setCanScrollLeft] = useState(false);
+  const [canScrollRight, setCanScrollRight] = useState(true);
+
+  useEffect(() => {
+    checkScrollability();
+    window.addEventListener('resize', checkScrollability);
+    return () => window.removeEventListener('resize', checkScrollability);
+  }, [products]);
+
+  const checkScrollability = () => {
+    const container = scrollContainerRef.current;
+    if (!container) return;
+
+    setCanScrollLeft(container.scrollLeft > 0);
+    setCanScrollRight(
+      container.scrollLeft < container.scrollWidth - container.clientWidth - 10
+    );
+  };
+
+  const scroll = (direction) => {
+    const container = scrollContainerRef.current;
+    if (!container) return;
+
+    const scrollAmount = direction === 'left' ? -400 : 400;
+    container.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+
+    setTimeout(checkScrollability, 300);
+  };
+
+  if (!products || products.length === 0) {
+    return null;
+  }
+
+  return (
+    <section className="bg-gradient-to-b from-white to-gray-50 py-12 lg:py-16">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Section Header */}
+        <div className="flex items-center justify-between mb-8">
+          <div>
+            <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-2">
+              🔥 Best Sellers
+            </h2>
+            <p className="text-gray-600">Our most loved products by customers</p>
+          </div>
+
+          {/* Desktop Navigation Arrows */}
+          <div className="hidden lg:flex items-center gap-2">
+            <button
+              onClick={() => scroll('left')}
+              disabled={!canScrollLeft}
+              className={`p-3 rounded-full border-2 transition-all ${
+                canScrollLeft
+                  ? 'border-[#415f2d] text-[#415f2d] hover:bg-[#415f2d] hover:text-white'
+                  : 'border-gray-200 text-gray-300 cursor-not-allowed'
+              }`}
+              aria-label="Scroll left"
+            >
+              <FiChevronLeft className="w-5 h-5" />
+            </button>
+            <button
+              onClick={() => scroll('right')}
+              disabled={!canScrollRight}
+              className={`p-3 rounded-full border-2 transition-all ${
+                canScrollRight
+                  ? 'border-[#415f2d] text-[#415f2d] hover:bg-[#415f2d] hover:text-white'
+                  : 'border-gray-200 text-gray-300 cursor-not-allowed'
+              }`}
+              aria-label="Scroll right"
+            >
+              <FiChevronRight className="w-5 h-5" />
+            </button>
+          </div>
+        </div>
+
+        {/* Products Carousel */}
+        <div className="relative">
+          <div
+            ref={scrollContainerRef}
+            onScroll={checkScrollability}
+            className="flex gap-4 overflow-x-auto scrollbar-hide scroll-smooth pb-4"
+            style={{
+              scrollbarWidth: 'none',
+              msOverflowStyle: 'none',
+              WebkitOverflowScrolling: 'touch'
+            }}
+          >
+            {products.map((product) => (
+              <div
+                key={product._id}
+                className="flex-shrink-0 w-[280px] sm:w-[300px]"
+              >
+                <ProductCard product={product} />
+              </div>
+            ))}
+          </div>
+
+          {/* Mobile Scroll Indicators */}
+          <div className="flex lg:hidden justify-center gap-2 mt-4">
+            {canScrollLeft && (
+              <div className="h-1 w-8 bg-[#415f2d] rounded-full"></div>
+            )}
+            {canScrollRight && (
+              <div className="h-1 w-8 bg-gray-300 rounded-full"></div>
+            )}
+          </div>
+        </div>
+
+        {/* View All Link */}
+        <div className="mt-8 text-center">
+          <a
+            href="/shop?filter=bestSeller"
+            className="inline-flex items-center gap-2 px-6 py-3 bg-white border-2 border-[#415f2d] text-[#415f2d] font-bold rounded-lg hover:bg-[#415f2d] hover:text-white transition-all shadow-md hover:shadow-lg"
+          >
+            View All Best Sellers
+            <FiChevronRight className="w-5 h-5" />
+          </a>
+        </div>
+      </div>
+
+      <style jsx>{`
+        .scrollbar-hide::-webkit-scrollbar {
+          display: none;
+        }
+      `}</style>
+    </section>
+  );
 }

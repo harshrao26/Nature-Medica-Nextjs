@@ -1,139 +1,175 @@
 'use client';
 
 import { useState } from 'react';
-import { useDispatch } from 'react-redux';
-import { updateUserProfile } from '@/store/slices/userSlice';
+import { useDispatch, useSelector } from 'react-redux';
+import { setUser } from '@/store/slices/userSlice'; // Changed from updateUserProfile
 
 export default function AddressForm({ onSuccess }) {
   const dispatch = useDispatch();
+  const user = useSelector((state) => state.user?.user);
+
   const [formData, setFormData] = useState({
-    type: 'home',
-    street: '',
-    city: '',
-    state: '',
-    pincode: '',
-    phone: '',
-    isDefault: false
+    name: user?.name || '',
+    phone: user?.phone || '',
+    street: user?.address?.street || '',
+    city: user?.address?.city || '',
+    state: user?.address?.state || '',
+    pincode: user?.address?.pincode || '',
+    landmark: user?.address?.landmark || ''
   });
-  const [submitting, setSubmitting] = useState(false);
+
+  const [loading, setLoading] = useState(false);
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setSubmitting(true);
+    setLoading(true);
 
     try {
-      const res = await fetch('/api/user/addresses', {
-        method: 'POST',
+      // Update user profile via API
+      const res = await fetch('/api/user/update-profile', {
+        method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData)
+        body: JSON.stringify({
+          name: formData.name,
+          phone: formData.phone,
+          address: {
+            street: formData.street,
+            city: formData.city,
+            state: formData.state,
+            pincode: formData.pincode,
+            landmark: formData.landmark
+          }
+        })
       });
 
-      const data = await res.json();
-
       if (res.ok) {
-        dispatch(updateUserProfile({ addresses: data.addresses }));
-        alert('Address added successfully');
-        onSuccess?.();
+        const data = await res.json();
+        
+        // Update Redux store with new user data
+        dispatch(setUser(data.user));
+        
+        if (onSuccess) onSuccess();
+        alert('Address saved successfully!');
       } else {
-        alert(data.error || 'Failed to add address');
+        alert('Failed to save address');
       }
     } catch (error) {
-      alert('Failed to add address');
+      console.error('Error saving address:', error);
+      alert('Error saving address');
     } finally {
-      setSubmitting(false);
+      setLoading(false);
     }
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4 mb-6">
-      <div className="grid md:grid-cols-2 gap-4">
-        <div>
-          <label className="block font-semibold mb-2">Address Type:</label>
-          <select
-            value={formData.type}
-            onChange={(e) => setFormData({ ...formData, type: e.target.value })}
-            className="w-full border rounded-lg px-4 py-2"
-          >
-            <option value="home">Home</option>
-            <option value="work">Work</option>
-            <option value="other">Other</option>
-          </select>
-        </div>
-
-        <div>
-          <label className="block font-semibold mb-2">Phone:</label>
-          <input
-            type="tel"
-            value={formData.phone}
-            onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-            required
-            className="w-full border rounded-lg px-4 py-2"
-          />
-        </div>
+    <form onSubmit={handleSubmit} className="space-y-4">
+      <div>
+        <label className="block font-semibold mb-2">Full Name *</label>
+        <input
+          type="text"
+          name="name"
+          value={formData.name}
+          onChange={handleInputChange}
+          required
+          className="w-full border-2 rounded-lg px-4 py-2"
+        />
       </div>
 
       <div>
-        <label className="block font-semibold mb-2">Street Address:</label>
+        <label className="block font-semibold mb-2">Phone Number *</label>
+        <input
+          type="tel"
+          name="phone"
+          value={formData.phone}
+          onChange={handleInputChange}
+          required
+          pattern="[0-9]{10}"
+          className="w-full border-2 rounded-lg px-4 py-2"
+          placeholder="10-digit mobile number"
+        />
+      </div>
+
+      <div>
+        <label className="block font-semibold mb-2">Street Address *</label>
         <input
           type="text"
+          name="street"
           value={formData.street}
-          onChange={(e) => setFormData({ ...formData, street: e.target.value })}
+          onChange={handleInputChange}
           required
-          className="w-full border rounded-lg px-4 py-2"
+          className="w-full border-2 rounded-lg px-4 py-2"
+          placeholder="House No., Building Name, Street"
         />
       </div>
 
-      <div className="grid md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-2 gap-4">
         <div>
-          <label className="block font-semibold mb-2">City:</label>
+          <label className="block font-semibold mb-2">City *</label>
           <input
             type="text"
+            name="city"
             value={formData.city}
-            onChange={(e) => setFormData({ ...formData, city: e.target.value })}
+            onChange={handleInputChange}
             required
-            className="w-full border rounded-lg px-4 py-2"
+            className="w-full border-2 rounded-lg px-4 py-2"
           />
         </div>
 
         <div>
-          <label className="block font-semibold mb-2">State:</label>
+          <label className="block font-semibold mb-2">State *</label>
           <input
             type="text"
+            name="state"
             value={formData.state}
-            onChange={(e) => setFormData({ ...formData, state: e.target.value })}
+            onChange={handleInputChange}
             required
-            className="w-full border rounded-lg px-4 py-2"
-          />
-        </div>
-
-        <div>
-          <label className="block font-semibold mb-2">Pincode:</label>
-          <input
-            type="text"
-            value={formData.pincode}
-            onChange={(e) => setFormData({ ...formData, pincode: e.target.value })}
-            required
-            className="w-full border rounded-lg px-4 py-2"
+            className="w-full border-2 rounded-lg px-4 py-2"
           />
         </div>
       </div>
 
-      <label className="flex items-center">
-        <input
-          type="checkbox"
-          checked={formData.isDefault}
-          onChange={(e) => setFormData({ ...formData, isDefault: e.target.checked })}
-          className="mr-2"
-        />
-        <span>Set as default address</span>
-      </label>
+      <div className="grid grid-cols-2 gap-4">
+        <div>
+          <label className="block font-semibold mb-2">Pincode *</label>
+          <input
+            type="text"
+            name="pincode"
+            value={formData.pincode}
+            onChange={handleInputChange}
+            required
+            pattern="[0-9]{6}"
+            className="w-full border-2 rounded-lg px-4 py-2"
+            placeholder="6-digit pincode"
+          />
+        </div>
+
+        <div>
+          <label className="block font-semibold mb-2">Landmark</label>
+          <input
+            type="text"
+            name="landmark"
+            value={formData.landmark}
+            onChange={handleInputChange}
+            className="w-full border-2 rounded-lg px-4 py-2"
+            placeholder="Optional"
+          />
+        </div>
+      </div>
 
       <button
         type="submit"
-        disabled={submitting}
-        className="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 disabled:opacity-50"
+        disabled={loading}
+        className="w-full bg-[#3a5d1e] text-white py-3 rounded-lg font-bold hover:bg-[#2d4818] disabled:opacity-50"
       >
-        {submitting ? 'Saving...' : 'Save Address'}
+        {loading ? 'Saving...' : 'Save Address'}
       </button>
     </form>
   );

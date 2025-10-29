@@ -84,3 +84,5 @@ export async function POST(req) {
     }, { status: 500 });
   }
 }
+
+// This is a backend API route handler file and does not render any UI. No text or image dimensions are present or modifiable here.

@@ -1,102 +1,147 @@
 import nodemailer from 'nodemailer';
 
+// Create transporter
 const transporter = nodemailer.createTransport({
   host: process.env.SMTP_HOST,
-  port: process.env.SMTP_PORT,
-  secure: true,
+  port: parseInt(process.env.SMTP_PORT),
+  secure: process.env.SMTP_SECURE === 'true',
   auth: {
     user: process.env.SMTP_USER,
-    pass: process.env.SMTP_PASS,
-  },
+    pass: process.env.SMTP_PASS
+  }
 });
 
-export async function sendVerificationEmail(email, name, token) {
-  const verificationUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/verify?token=${token}`;
+// Send OTP email
+export async function sendOTPEmail(email, otp, type = 'verification') {
+  const subject = type === 'verification' 
+    ? 'Verify Your Email - NatureMedica' 
+    : 'Reset Your Password - NatureMedica';
   
-  const mailOptions = {
-    from: `"NatureMedica" <${process.env.SMTP_USER}>`,
-    to: email,
-    subject: 'Verify Your Email - NatureMedica',
-    html: `
-      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-        <h2 style="color: #059669;">Welcome to NatureMedica!</h2>
-        <p>Hi ${name},</p>
-        <p>Thank you for registering with NatureMedica. Please verify your email address by clicking the button below:</p>
-        <a href="${verificationUrl}" style="display: inline-block; padding: 12px 24px; background-color: #059669; color: white; text-decoration: none; border-radius: 5px; margin: 20px 0;">Verify Email</a>
-        <p>Or copy and paste this link into your browser:</p>
-        <p style="color: #666; font-size: 14px;">${verificationUrl}</p>
-        <p>This link will expire in 24 hours.</p>
-        <p>Best regards,<br>NatureMedica Team</p>
-      </div>
-    `,
-  };
-
-  await transporter.sendMail(mailOptions);
-}
-
-export async function sendOrderConfirmation(email, name, orderId, orderDetails) {
-  const mailOptions = {
-    from: `"NatureMedica" <${process.env.SMTP_USER}>`,
-    to: email,
-    subject: `Order Confirmation - ${orderId}`,
-    html: `
-      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-        <h2 style="color: #059669;">Order Confirmed!</h2>
-        <p>Hi ${name},</p>
-        <p>Your order <strong>${orderId}</strong> has been confirmed and is being processed.</p>
-        <div style="background-color: #f3f4f6; padding: 20px; border-radius: 8px; margin: 20px 0;">
-          <h3 style="margin-top: 0;">Order Summary</h3>
-          ${orderDetails.items.map(item => `
-            <div style="margin-bottom: 10px;">
-              <strong>${item.title}</strong> x ${item.quantity}<br>
-              <span style="color: #666;">₹${item.price}</span>
-            </div>
-          `).join('')}
-          <hr style="border: none; border-top: 1px solid #d1d5db;">
-          <div style="font-size: 18px; font-weight: bold;">
-            Total: ₹${orderDetails.finalPrice}
+  const html = `
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <style>
+        body { font-family: Arial, sans-serif; background-color: #f4f4f4; margin: 0; padding: 0; }
+        .container { max-width: 600px; margin: 40px auto; background: white; border-radius: 10px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .header { background: linear-gradient(135deg, #3a5d1e, #5a7f3d); color: white; padding: 30px; text-align: center; }
+        .content { padding: 40px 30px; }
+        .otp-box { background: #f8f9fa; border: 2px dashed #3a5d1e; border-radius: 8px; padding: 20px; text-align: center; margin: 30px 0; }
+        .otp-code { font-size: 36px; font-weight: bold; color: #3a5d1e; letter-spacing: 8px; }
+        .footer { background: #f8f9fa; padding: 20px; text-align: center; color: #666; font-size: 12px; }
+        .button { display: inline-block; padding: 12px 30px; background: #3a5d1e; color: white; text-decoration: none; border-radius: 6px; margin: 20px 0; }
+      </style>
+    </head>
+    <body>
+      <div class="container">
+        <div class="header">
+          <h1 style="margin: 0;">🌿 NatureMedica</h1>
+          <p style="margin: 10px 0 0 0; opacity: 0.9;">${subject}</p>
+        </div>
+        <div class="content">
+          <h2 style="color: #333; margin-top: 0;">Hello!</h2>
+          <p style="color: #666; line-height: 1.6;">
+            ${type === 'verification' 
+              ? 'Thank you for signing up with NatureMedica. Please use the OTP below to verify your email address.'
+              : 'We received a request to reset your password. Use the OTP below to proceed.'}
+          </p>
+          
+          <div class="otp-box">
+            <p style="margin: 0 0 10px 0; color: #666; font-size: 14px;">Your OTP Code</p>
+            <div class="otp-code">${otp}</div>
+            <p style="margin: 15px 0 0 0; color: #999; font-size: 12px;">Valid for 10 minutes</p>
+          </div>
+          
+          <p style="color: #666; line-height: 1.6;">
+            If you didn't request this, please ignore this email or contact our support team.
+          </p>
+          
+          <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #eee;">
+            <p style="color: #999; font-size: 13px; margin: 0;">
+              <strong>Security tip:</strong> Never share your OTP with anyone. NatureMedica will never ask for your OTP.
+            </p>
           </div>
         </div>
-        <p>We'll send you another email when your order ships.</p>
-        <p>Best regards,<br>NatureMedica Team</p>
+        <div class="footer">
+          <p style="margin: 0;">© ${new Date().getFullYear()} NatureMedica. All rights reserved.</p>
+          <p style="margin: 10px 0 0 0;">Natural Wellness Products</p>
+        </div>
       </div>
-    `,
-  };
+    </body>
+    </html>
+  `;
 
-  await transporter.sendMail(mailOptions);
-}
-
-export async function sendPasswordResetEmail(email, name, token) {
-  const resetUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/reset-password?token=${token}`;
-  
-  const mailOptions = {
-    from: `"NatureMedica" <${process.env.SMTP_USER}>`,
-    to: email,
-    subject: 'Reset Your Password - NatureMedica',
-    html: `
-      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-        <h2 style="color: #059669;">Reset Your Password</h2>
-        <p>Hi ${name},</p>
-        <p>You requested to reset your password. Click the button below to create a new password:</p>
-        <a href="${resetUrl}" style="display: inline-block; padding: 12px 24px; background-color: #059669; color: white; text-decoration: none; border-radius: 5px; margin: 20px 0;">Reset Password</a>
-        <p>Or copy and paste this link into your browser:</p>
-        <p style="color: #666; font-size: 14px;">${resetUrl}</p>
-        <p>This link will expire in 1 hour.</p>
-        <p>If you didn't request this, please ignore this email.</p>
-        <p>Best regards,<br>NatureMedica Team</p>
-      </div>
-    `,
-  };
-
-  await transporter.sendMail(mailOptions);
-}
-export async function testEmailConnection() {
   try {
-    await transporter.verify();
-    console.log('✅ SMTP connection successful');
-    return { success: true, message: 'Email server is ready' };
+    await transporter.sendMail({
+      from: `"${process.env.SMTP_FROM_NAME}" <${process.env.SMTP_FROM_EMAIL}>`,
+      to: email,
+      subject,
+      html
+    });
+    return { success: true };
   } catch (error) {
-    console.error('❌ SMTP connection failed:', error);
+    console.error('Email send error:', error);
     return { success: false, error: error.message };
+  }
+}
+
+// Send welcome email
+export async function sendWelcomeEmail(name, email) {
+  const html = `
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <style>
+        body { font-family: Arial, sans-serif; background-color: #f4f4f4; margin: 0; padding: 0; }
+        .container { max-width: 600px; margin: 40px auto; background: white; border-radius: 10px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .header { background: linear-gradient(135deg, #3a5d1e, #5a7f3d); color: white; padding: 40px; text-align: center; }
+        .content { padding: 40px 30px; }
+        .button { display: inline-block; padding: 14px 32px; background: #3a5d1e; color: white; text-decoration: none; border-radius: 6px; margin: 20px 0; }
+        .footer { background: #f8f9fa; padding: 20px; text-align: center; color: #666; font-size: 12px; }
+      </style>
+    </head>
+    <body>
+      <div class="container">
+        <div class="header">
+          <h1 style="margin: 0; font-size: 32px;">🎉 Welcome to NatureMedica!</h1>
+        </div>
+        <div class="content">
+          <h2 style="color: #333;">Hello ${name}!</h2>
+          <p style="color: #666; line-height: 1.6;">
+            We're excited to have you join our community of wellness enthusiasts. Your account is now active and ready to use!
+          </p>
+          <p style="color: #666; line-height: 1.6;">
+            Explore our range of premium Ayurvedic supplements and natural wellness products designed to help you live your healthiest life.
+          </p>
+          <div style="text-align: center; margin: 30px 0;">
+            <a href="${process.env.NEXT_PUBLIC_SITE_URL}/products" class="button">Start Shopping</a>
+          </div>
+          <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin-top: 30px;">
+            <h3 style="margin: 0 0 10px 0; color: #3a5d1e;">Why Choose NatureMedica?</h3>
+            <ul style="color: #666; padding-left: 20px;">
+              <li>100% Natural & Organic Products</li>
+              <li>Lab-Tested for Quality & Purity</li>
+              <li>Free Shipping on All Orders</li>
+              <li>Easy Returns within 30 Days</li>
+            </ul>
+          </div>
+        </div>
+        <div class="footer">
+          <p style="margin: 0;">© ${new Date().getFullYear()} NatureMedica. All rights reserved.</p>
+        </div>
+      </div>
+    </body>
+    </html>
+  `;
+
+  try {
+    await transporter.sendMail({
+      from: `"${process.env.SMTP_FROM_NAME}" <${process.env.SMTP_FROM_EMAIL}>`,
+      to: email,
+      subject: 'Welcome to NatureMedica! 🌿',
+      html
+    });
+  } catch (error) {
+    console.error('Welcome email error:', error);
   }
 }

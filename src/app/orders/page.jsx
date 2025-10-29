@@ -15,7 +15,7 @@ export default function OrdersPage() {
 
   useEffect(() => {
     if (!isAuthenticated) {
-      router.push('/login?redirect=/orders');
+      router.push('/auth?redirect=/orders');
       return;
     }
 

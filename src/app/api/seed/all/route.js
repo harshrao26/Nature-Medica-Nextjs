@@ -20,7 +20,7 @@ export async function GET(req) {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          name: 'Super Admin',
+          name: 'Admin',
           email: 'admin@naturemedica.com',
           password: 'Admin@12345'
         })

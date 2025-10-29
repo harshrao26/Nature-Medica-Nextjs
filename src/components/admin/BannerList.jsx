@@ -204,7 +204,7 @@ export default function BannerList({ banners }) {
               className="mb-2"
             />
             {(imageFile || formData.image?.url) && (
-              <div className="relative w-full h-48">
+              <div className="relative w-full ">
                 <img
                   src={imageFile || formData.image.url}
                   alt="Preview"
@@ -251,12 +251,12 @@ export default function BannerList({ banners }) {
         {banners.map((banner) => (
           <div key={banner._id} className="bg-white rounded-lg shadow p-4">
             <div className="flex gap-4">
-              <div className="relative w-64 h-32 flex-shrink-0">
+              <div className="relative w-64  flex-shrink-0">
                 <img
                   src={banner.image.url}
                   alt={banner.title || 'Banner'}
                   fill
-                  className="object-cover rounded"
+                  className="object-cover h-10 rounded"
                 />
               </div>
               

@@ -1,0 +1,24 @@
+import connectDB from '@/lib/mongodb';
+import Product from '@/models/Product';
+import BestSellerSection from './BestsellerSection';
+ 
+export default async function BestSellerSectionWrapper() {
+  await connectDB();
+
+  // Fetch best seller products
+  const products = await Product.find({
+    isBestSeller: true,
+    visibility: true,
+    stock: { $gt: 0 }
+  })
+    .populate('category', 'name')
+    .sort({ createdAt: -1 })
+    .limit(12)
+    .lean();
+
+  if (!products || products.length === 0) {
+    return null;
+  }
+
+  return <BestSellerSection products={JSON.parse(JSON.stringify(products))} />;
+}

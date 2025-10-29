@@ -52,24 +52,26 @@ export default async function ProductsPage({ searchParams }) {
   const categories = await Category.find({ active: true }).lean();
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold mb-8">All Products</h1>
-      
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-        <aside className="md:col-span-1">
-          <FilterSidebar 
-            categories={JSON.parse(JSON.stringify(categories))}
-            currentFilters={searchParams}
-          />
-        </aside>
-        
-        <main className="md:col-span-3">
-          <ProductList 
-            products={JSON.parse(JSON.stringify(products))}
-            currentPage={page}
-            totalPages={totalPages}
-          />
-        </main>
+    <div className="bg-gray-50 min-h-screen">
+      <div className="max-w-7xl mx-auto px-0 lg:px-4 lg:py-8">
+        <div className="grid grid-cols-1 lg:grid-cols-4 lg:gap-8">
+          {/* Sidebar - Hidden on mobile, shows as drawer */}
+          <aside className="lg:col-span-1">
+            <FilterSidebar 
+              categories={JSON.parse(JSON.stringify(categories))}
+              currentFilters={searchParams}
+            />
+          </aside>
+          
+          {/* Main Product Grid */}
+          <main className="lg:col-span-3">
+            <ProductList 
+              products={JSON.parse(JSON.stringify(products))}
+              currentPage={page}
+              totalPages={totalPages}
+            />
+          </main>
+        </div>
       </div>
     </div>
   );
