@@ -4,7 +4,7 @@ import ReturnRequest from '@/models/ReturnRequest';
 import Order from '@/models/Order';
 import User from '@/models/User';
 import { requireAdmin } from '@/middleware/auth';
-import { scheduleShiprocketPickup } from '@/lib/shiprocket';
+// import { scheduleShiprocketPickup } from '@/lib/shiprocket';
 
 export async function POST(req) {
   try {
@@ -42,18 +42,18 @@ export async function POST(req) {
     }
 
     // Schedule pickup via Shiprocket with customer's original delivery address
-    const pickupResult = await scheduleShiprocketPickup({
-      orderId: returnRequest.order.orderId,
-      returnId: returnRequest.returnId,
-      customer: {
-        name: returnRequest.user.name,
-        email: returnRequest.user.email,
-        phone: returnRequest.user.phone || shippingAddress.phone
-      },
-      address: shippingAddress, // Use original shipping address for pickup
-      items: returnRequest.items,
-      totalAmount: returnRequest.refundAmount
-    });
+    // const pickupResult = await scheduleShiprocketPickup({
+    //   orderId: returnRequest.order.orderId,
+    //   returnId: returnRequest.returnId,
+    //   customer: {
+    //     name: returnRequest.user.name,
+    //     email: returnRequest.user.email,
+    //     phone: returnRequest.user.phone || shippingAddress.phone
+    //   },
+    //   address: shippingAddress, // Use original shipping address for pickup
+    //   items: returnRequest.items,
+    //   totalAmount: returnRequest.refundAmount
+    // });
 
     // Update return request status
     returnRequest.status = 'pickup_scheduled';

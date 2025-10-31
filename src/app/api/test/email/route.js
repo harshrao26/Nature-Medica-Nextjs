@@ -1,18 +1,11 @@
 import { NextResponse } from 'next/server';
-import { testEmailConnection, sendOrderConfirmation } from '@/lib/email';
+// import {  sendOrderConfirmation } from '@/lib/email';
 
 export async function POST(req) {
   try {
     const { type, email, name } = await req.json();
 
-    // Test connection
-    const connectionTest = await testEmailConnection();
-    if (!connectionTest.success) {
-      return NextResponse.json({
-        error: 'Email server connection failed',
-        details: connectionTest.error
-      }, { status: 500 });
-    }
+   
 
     // Send test email
     if (type === 'order') {
@@ -23,12 +16,12 @@ export async function POST(req) {
         finalPrice: 598
       };
 
-      await sendOrderConfirmation(
-        email,
-        name,
-        'TEST001',
-        testOrderDetails
-      );
+      // await sendOrderConfirmation(
+      //   email,
+      //   name,
+      //   'TEST001',
+      //   testOrderDetails
+      // );
     }
 
     return NextResponse.json({

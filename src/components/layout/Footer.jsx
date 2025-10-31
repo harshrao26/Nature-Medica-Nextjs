@@ -6,33 +6,7 @@ import logo from '@/assets/logo.webp';
 export default function Footer() {
   return (
     <footer className="bg-white border-t border-gray-200">
-      {/* Newsletter Section */}
-      <div className="bg-gradient-to-r from-[#415f2d] to-[#344b24] py-6 sm:py-8">
-        <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-8">
-          <div className="flex flex-col md:flex-row items-center justify-between gap-3 md:gap-4">
-            <div className="text-white text-center md:text-left">
-              <h3 className="text-lg sm:text-xl font-bold mb-2">Stay Updated with Health Tips</h3>
-              <p className="text-white text-opacity-90 text-sm sm:text-base">Subscribe to get special offers, wellness tips, and more.</p>
-            </div>
-            <div className="w-full md:w-auto">
-              <form className="flex gap-2 max-w-md">
-                <input
-                  type="email"
-                  placeholder="Enter your email"
-                  className="flex-1 px-2.5 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-white text-gray-900 text-sm sm:text-base"
-                />
-                <button
-                  type="submit"
-                  className="bg-white text-[#415f2d] px-3 py-2 rounded-lg hover:bg-gray-100 transition-all font-semibold flex items-center gap-2 whitespace-nowrap text-sm sm:text-base"
-                >
-                  Subscribe
-                  <FiArrowRight className="w-3.5 h-3.5" />
-                </button>
-              </form>
-            </div>
-          </div>
-        </div>
-      </div>
+     
 
       {/* Main Footer Content */}
       <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-8 py-6 sm:py-10">

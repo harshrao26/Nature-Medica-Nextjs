@@ -3,7 +3,7 @@ import connectDB from '@/lib/mongodb';
 import User from '@/models/User';
 import bcrypt from 'bcryptjs';
 import { generateVerificationToken } from '@/lib/jwt';
-import { sendVerificationEmail } from '@/lib/email';
+// import { sendVerificationEmail } from '@/lib/email';
 
 export async function POST(req) {
   try {
@@ -44,7 +44,7 @@ export async function POST(req) {
     });
 
     // Send verification email
-    await sendVerificationEmail(email, name, verificationToken);
+    // await sendVerificationEmail(email, name, verificationToken);
 
     return NextResponse.json({
       success: true,

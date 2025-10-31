@@ -3,7 +3,7 @@ import connectDB from '@/lib/mongodb';
 import Order from '@/models/Order';
 import User from '@/models/User';
 import { requireAdmin } from '@/middleware/auth';
-import { createShiprocketOrder, ensurePickupLocation } from '@/lib/shiprocket';
+// import { createShiprocketOrder, ensurePickupLocation } from '@/lib/shiprocket';
 
 export async function POST(req) {
   try {
@@ -39,18 +39,18 @@ export async function POST(req) {
     }
 
     // Create Shiprocket shipment
-    const result = await createShiprocketOrder({
-      orderId: order.orderId,
-      customer: {
-        name: order.user?.name || 'Customer',
-        email: order.user?.email || 'customer@example.com',
-      },
-      shippingAddress: order.shippingAddress,
-      items: order.items,
-      paymentMode: order.paymentMode,
-      totalPrice: order.totalPrice,
-      discount: order.discount || 0
-    });
+    // const result = await createShiprocketOrder({
+    //   orderId: order.orderId,
+    //   customer: {
+    //     name: order.user?.name || 'Customer',
+    //     email: order.user?.email || 'customer@example.com',
+    //   },
+    //   shippingAddress: order.shippingAddress,
+    //   items: order.items,
+    //   paymentMode: order.paymentMode,
+    //   totalPrice: order.totalPrice,
+    //   discount: order.discount || 0
+    // });
 
     // Update order with Shiprocket info
     order.shiprocketOrderId = result.shiprocketOrderId;
