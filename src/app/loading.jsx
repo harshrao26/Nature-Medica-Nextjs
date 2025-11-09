@@ -63,7 +63,7 @@ export default function LoadingScreen() {
         {/* Text */}
         <div className="space-y-2">
           <h2 
-            className="text-2xl font-bold"
+            className="text-xl"
             style={{ color: '#3A5D1E' }}
           >
             Welcome to Nature Medica
