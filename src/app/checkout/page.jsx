@@ -224,7 +224,8 @@ export default function CheckoutPage() {
         razorpay.open();
       } else {
         dispatch(clearCart());
-        router.push(`/order-success?orderId=${data.order.orderId}`);
+  router.push('/thankyou');
+        
       }
     } catch {
       setLoading(false);
