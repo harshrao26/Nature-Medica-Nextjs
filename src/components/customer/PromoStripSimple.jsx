@@ -25,14 +25,14 @@ export default function PromoStripSimple() {
             onClick={copyCode}
             className="inline-flex items-center gap-1 px-2 py-0.5 bg-white/20 rounded hover:bg-white/30 transition-colors mx-1"
           >
-            <span className="font-bold">NEW20</span>
+            <span className="font-bold">NATURE20</span>
             {copied ? (
               <Check className="w-3 h-3" />
             ) : (
               <Copy className="w-3 h-3" />
             )}
           </button>
-          {' '}for 20% discount on your first order!
+          {' '}for 20% discount on your first order!   Minimum order value ₹499.
         </p>
         <button
           onClick={() => setIsVisible(false)}

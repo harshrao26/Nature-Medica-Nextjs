@@ -24,7 +24,7 @@ export default function SearchFirstHeader() {
   const userState = useSelector((state) => state.user || { user: null, isAuthenticated: false });
   const { user, isAuthenticated } = userState;
 
-  const quickLinks = ['Vitamin C',  'Multivitamins', 'Supplements'];
+  const quickLinks = ['Cold Cream',  'Alovera Gel', 'Serum', "Facewash", "Sanitary"];
 
   // Typing animation state
   const [placeholder, setPlaceholder] = useState('');
@@ -132,7 +132,7 @@ export default function SearchFirstHeader() {
 
                 {/* Dropdown Menu */}
                 {showUserMenu && (
-                  <div className="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-xl border border-gray-200 overflow-hidden animate-slideDown">
+                  <div className="absolute z-50 right-0 mt-2 w-56 bg-white rounded-lg shadow-xl border border-gray-200 overflow-hidden animate-slideDown">
                     {/* User Info */}
                     <div className="p-4 bg-gradient-to-br from-[#3a5d1e] to-[#4a7d2e] text-white">
                       <p className="font-bold text-sm">{user.name}</p>
@@ -140,7 +140,7 @@ export default function SearchFirstHeader() {
                     </div>
 
                     {/* Menu Items */}
-                    <div className="py-2">
+                    <div className="py-2 ">
                       <Link 
                         href="/profile" 
                         className="flex items-center gap-3 px-4 py-3 hover:bg-gray-50 transition-colors"
@@ -220,7 +220,7 @@ export default function SearchFirstHeader() {
                 <Link
                   key={link}
                   href={`/products?search=${encodeURIComponent(link)}`}
-                  className="px-3 py-1 bg-gray-100 rounded-full hover:bg-gray-200 transition-colors hover:text-[#3a5d1e]"
+                  className="px-3 py-1 bg-[#4B6D35] text-white rounded-full hover:bg-gray-200 transition-colors hover:text-[#3a5d1e]"
                 >
                   {link}
                 </Link>
