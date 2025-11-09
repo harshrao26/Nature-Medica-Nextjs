@@ -5,14 +5,31 @@ import { requireAuth } from '@/middleware/auth';
 
 export async function GET(req) {
   try {
-    const authData = await requireAuth(req);
     await connectDB();
+    const authData = await requireAuth(req);
 
-    const user = await User.findById(authData.userId).select('-password');
+    const userDoc = await User.findById(authData.userId);
 
-    if (!user) {
+    if (!userDoc) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
+
+    // Convert mongoose doc to plain object
+    const userPlain = userDoc.toObject ? userDoc.toObject() : userDoc;
+
+    // Build sanitized user response object
+    const user = {
+      _id: userPlain._id,
+      name: userPlain.name,
+      email: userPlain.email,
+      phone: userPlain.phone,
+      role: userPlain.role,
+      isEmailVerified: userPlain.isEmailVerified,
+      addresses: Array.isArray(userPlain.addresses) ? userPlain.addresses : [],
+      isActive: userPlain.isActive,
+      createdAt: userPlain.createdAt,
+      updatedAt: userPlain.updatedAt,
+    };
 
     return NextResponse.json({ user });
   } catch (error) {
@@ -22,8 +39,8 @@ export async function GET(req) {
 
 export async function PUT(req) {
   try {
-    const authData = await requireAuth(req);
     await connectDB();
+    const authData = await requireAuth(req);
 
     const { name, email, phone } = await req.json();
 
@@ -33,7 +50,6 @@ export async function PUT(req) {
         email, 
         _id: { $ne: authData.userId } 
       });
-
       if (existingUser) {
         return NextResponse.json(
           { error: 'Email already in use' },
@@ -42,15 +58,31 @@ export async function PUT(req) {
       }
     }
 
-    const user = await User.findByIdAndUpdate(
+    // Update user profile
+    const userDoc = await User.findByIdAndUpdate(
       authData.userId,
       { name, email, phone },
       { new: true, runValidators: true }
-    ).select('-password');
+    );
 
-    if (!user) {
+    if (!userDoc) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
+
+    const userPlain = userDoc.toObject ? userDoc.toObject() : userDoc;
+
+    const user = {
+      _id: userPlain._id,
+      name: userPlain.name,
+      email: userPlain.email,
+      phone: userPlain.phone,
+      role: userPlain.role,
+      isEmailVerified: userPlain.isEmailVerified,
+      addresses: Array.isArray(userPlain.addresses) ? userPlain.addresses : [],
+      isActive: userPlain.isActive,
+      createdAt: userPlain.createdAt,
+      updatedAt: userPlain.updatedAt,
+    };
 
     return NextResponse.json({
       message: 'Profile updated successfully',

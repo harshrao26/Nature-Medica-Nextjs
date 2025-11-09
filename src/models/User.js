@@ -1,6 +1,19 @@
 import mongoose from 'mongoose';
 import bcrypt from 'bcryptjs';
 
+// Define address schema
+const addressSchema = new mongoose.Schema({
+  name: { type: String, required: true },
+  phone: { type: String, required: true },
+  street: { type: String, required: true },
+  city: { type: String, required: true },
+  state: { type: String, required: true },
+  pincode: { type: String, required: true },
+  landmark: { type: String, default: '' },
+  type: { type: String, default: 'home' },
+  isDefault: { type: Boolean, default: false },
+}, { _id: true });
+
 const UserSchema = new mongoose.Schema({
   name: { 
     type: String, 
@@ -30,13 +43,7 @@ const UserSchema = new mongoose.Schema({
   resetPasswordOTPExpires: { type: Date },
   
   // Address
-  address: {
-    street: String,
-    city: String,
-    state: String,
-    pincode: String,
-    landmark: String
-  },
+  addresses: [addressSchema], // ✅ Fixed: array of objects
   
   // User preferences
   role: { 

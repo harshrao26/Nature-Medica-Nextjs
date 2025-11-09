@@ -45,6 +45,8 @@ export default function EditProfilePage() {
 
       const data = await res.json();
 
+      console.log(data);
+
       if (res.ok) {
         dispatch(setUser(data.user));
         setSuccess('Profile updated successfully!');

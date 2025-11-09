@@ -24,7 +24,7 @@ export default function SearchFirstHeader() {
   const userState = useSelector((state) => state.user || { user: null, isAuthenticated: false });
   const { user, isAuthenticated } = userState;
 
-  const quickLinks = ['Vitamin C', 'Protein Powder', 'Omega-3', 'Collagen'];
+  const quickLinks = ['Vitamin C',  'Multivitamins', 'Supplements'];
 
   useEffect(() => {
     const handleClickOutside = (event) => {

@@ -57,7 +57,7 @@ export default function ProfilePage() {
   // Menu sections
   const accountSection = [
     { icon: Package, label: 'My Orders', href: '/orders', badge: null },
-    { icon: MapPin, label: 'Addresses', href: '/addresses', badge: user?.addresses?.length || 0 },
+    // { icon: MapPin, label: 'Addresses', href: '/addresses', badge: user?.addresses?.length || 0 },
     { icon: Heart, label: 'Wishlist', href: '/wishlist', badge: null },
     { icon: CreditCard, label: 'Payment Methods', href: '/payment-methods', badge: null },
   ];

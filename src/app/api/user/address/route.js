@@ -15,6 +15,25 @@ async function getUserFromToken(req) {
   }
 }
 
+
+export async function GET(req) {
+  try {
+    await connectDB();
+    const authData = await requireAuth(req);
+
+    // Select all fields except password (includes addresses)
+    const user = await User.findById(authData.userId).select('-password');
+
+    if (!user) {
+      return NextResponse.json({ error: 'User not found' }, { status: 404 });
+    }
+
+    return NextResponse.json({ user }); // will include addresses field
+  } catch (error) {
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+}
+
 // Add new address
 export async function POST(req) {
   try {
