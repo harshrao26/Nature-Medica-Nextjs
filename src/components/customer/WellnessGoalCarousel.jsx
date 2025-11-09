@@ -3,7 +3,7 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import Link from 'next/link';
-const videoPaths = ['/b2.mp4', '/b3.mp4','/b1.mp4', '/men.mp4',  ];
+const videoPaths = ['/b2.mp4','/b5.mp4','/b1.mp4', '/men.mp4',  ];
 
 export default function WellnessGoalCarousel() {
   const scrollContainerRef = useRef(null);

@@ -26,6 +26,37 @@ export default function SearchFirstHeader() {
 
   const quickLinks = ['Vitamin C',  'Multivitamins', 'Supplements'];
 
+  // Typing animation state
+  const [placeholder, setPlaceholder] = useState('');
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [currentCharIndex, setCurrentCharIndex] = useState(0);
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  useEffect(() => {
+    const currentWord = quickLinks[currentIndex];
+    let timeout;
+
+    if (!isDeleting && currentCharIndex <= currentWord.length) {
+      timeout = setTimeout(() => {
+        setPlaceholder(currentWord.substring(0, currentCharIndex));
+        setCurrentCharIndex(currentCharIndex + 1);
+      }, 150);
+    } else if (isDeleting && currentCharIndex >= 0) {
+      timeout = setTimeout(() => {
+        setPlaceholder(currentWord.substring(0, currentCharIndex));
+        setCurrentCharIndex(currentCharIndex - 1);
+      }, 100);
+    } else if (currentCharIndex === currentWord.length + 1) {
+      timeout = setTimeout(() => setIsDeleting(true), 1000);
+    } else if (currentCharIndex === -1) {
+      setIsDeleting(false);
+      setCurrentIndex((currentIndex + 1) % quickLinks.length);
+      setCurrentCharIndex(0);
+    }
+
+    return () => clearTimeout(timeout);
+  }, [currentCharIndex, isDeleting, currentIndex, quickLinks]);
+
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (menuRef.current && !menuRef.current.contains(event.target)) {
@@ -61,12 +92,12 @@ export default function SearchFirstHeader() {
   return (
     <header className="sticky top-0 z-50 bg-white shadow-sm">
 <PromoStripSimple />
-      <div className="max-w-6xl mx-auto px-4 py-4">
+      <div className="max-w-6xl mx-auto px-4 pb-4">
         {/* Top Row */}
-        <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center justify-between ">
           {/* Logo */}
           <Link href="/" className="flex-shrink-0">
-            <Image src={logo} alt="Nature Medica" className="h-10 w-auto" />
+            <Image src={logo} alt="Nature Medica" className="h-14  w-auto" />
           </Link>
           
           {/* Right Actions */}
@@ -172,7 +203,7 @@ export default function SearchFirstHeader() {
               <Search className="w-5 h-5 text-gray-400 mr-3 flex-shrink-0" />
               <input
                 type="text"
-                placeholder="Search for supplements, vitamins, wellness products..."
+                placeholder={ `Search for ${placeholder}...`}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="flex-1 bg-transparent focus:outline-none text-sm text-gray-900 placeholder:text-gray-500"

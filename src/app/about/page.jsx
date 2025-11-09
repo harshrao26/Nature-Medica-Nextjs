@@ -291,13 +291,13 @@ export default function AboutPage() {
           </p>
           
           <div className="space-y-3 mb-6">
-            <a href="tel:+917007016231" className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+            <a href="tel:+918400043322" className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
               <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
                 <Phone className="w-5 h-5 text-blue-600" />
               </div>
               <div>
                 <p className="text-xs text-gray-500">Call Us</p>
-                <p className="font-semibold text-gray-900">+91 7007016231</p>
+                <p className="font-semibold text-gray-900">+91 8400043322</p>
               </div>
             </a>
 

@@ -170,8 +170,8 @@ export default function AdminOrdersPage() {
               <p className="text-2xl font-bold text-red-900">{stats.cancelled}</p>
             </div>
             <div className="bg-[#3a5d1e] bg-opacity-10 rounded-xl p-4 border border-[#3a5d1e]">
-              <p className="text-sm text-[#3a5d1e] mb-1">Revenue</p>
-              <p className="text-2xl font-bold text-[#2d4818]">₹{stats.revenue.toLocaleString('en-IN')}</p>
+              <p className="text-sm text-[#ffffff] mb-1">Revenue</p>
+              <p className="text-2xl font-bold text-[#ffffff]">₹{stats.revenue.toLocaleString('en-IN')}</p>
             </div>
           </div>
 
@@ -252,6 +252,9 @@ export default function AdminOrdersPage() {
             <table className="w-full">
               <thead className="bg-gray-50 border-b border-gray-200">
                 <tr>
+                  <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                    Order ID
+                  </th>
                   <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
                     Order Details
                   </th>

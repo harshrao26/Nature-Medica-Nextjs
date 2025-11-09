@@ -102,7 +102,7 @@ export default function AuthPage() {
               <Image src={logo} alt="Nature Medica" width={220} height={90} className="mb-4" />
             </Link>
             <h1 className="text-3xl font-bold mb-2" style={{ color: '#3A5D1E' }}>
-              Welcome to Natural Wellness
+              Welcome to Nature Medica
             </h1>
             <p className="text-base text-gray-600 leading-relaxed">
               Your trusted partner for quality medicines, vitamins, and organic health products

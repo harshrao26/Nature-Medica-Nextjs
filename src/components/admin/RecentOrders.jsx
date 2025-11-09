@@ -30,7 +30,7 @@ export default function RecentOrders({ orders }) {
               <div className="flex justify-between items-start mb-2">
                 <div>
                   <p className="font-semibold">#{order.orderId}</p>
-                  <p className="text-sm text-gray-600">{order.user.name}</p>
+                  <p className="text-sm text-gray-600">{order.user?.name}</p>
                 </div>
                 <span className={`px-2 py-1 rounded text-xs font-semibold ${getStatusColor(order.orderStatus)}`}>
                   {order.orderStatus}

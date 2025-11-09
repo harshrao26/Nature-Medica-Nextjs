@@ -916,6 +916,7 @@ export default function AdminOrderDetailsPage() {
               <div className="mb-6">
                 <h3 className="font-semibold mb-3">Select Courier Partner</h3>
                 <div className="space-y-3 max-h-96 overflow-y-auto">
+                  {console.log(couriers)}
                   {couriers.map((courier) => (
                     <label
                       key={courier.courierId}
@@ -948,13 +949,14 @@ export default function AdminOrderDetailsPage() {
                           </p>
                           {order.paymentMode === 'cod' && courier.codCharges > 0 && (
                             <p className="text-xs text-gray-500 mt-1">
-                              COD: ₹{courier.codCharges}
+                              COD: INR{courier.codCharges}
+
                             </p>
                           )}
                         </div>
                         <div className="text-right">
                           <p className="font-bold text-2xl text-gray-900">
-                            ₹{courier.totalCharges}
+                            ₹{courier.totalCharge}
                           </p>
                           <p className="text-xs text-gray-500">Total Charges</p>
                         </div>
