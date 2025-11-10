@@ -32,7 +32,7 @@ export default function PromoStripSimple() {
               <Copy className="w-3 h-3" />
             )}
           </button>
-          {' '}for 20% discount on your first order!   Minimum order value ₹499.
+          {' '}for 20% discount on your first order!   Minimum order value ₹999.
         </p>
         <button
           onClick={() => setIsVisible(false)}
