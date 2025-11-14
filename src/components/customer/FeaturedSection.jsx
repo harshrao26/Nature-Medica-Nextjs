@@ -104,7 +104,7 @@ export default function FeaturedSection({ products }) {
           <div
             ref={scrollContainerRef}
             onScroll={checkScrollability}
-            className="flex gap-4 overflow-x-auto scrollbar-hide scroll-smooth pb-4"
+            className="flex gap-2 overflow-x-auto scrollbar-hide scroll-smooth pb-4"
             style={{
               scrollbarWidth: 'none',
               msOverflowStyle: 'none',
@@ -112,7 +112,7 @@ export default function FeaturedSection({ products }) {
             }}
           >
             {cachedProducts.map((product) => (
-              <div key={product._id} className="flex-shrink-0 w-44 md:w-72 ">
+              <div key={product._id} className="flex-shrink-0 w-40 md:w-72 ">
                 <ProductCard product={product} />
               </div>
             ))}

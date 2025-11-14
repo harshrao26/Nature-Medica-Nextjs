@@ -107,7 +107,7 @@ export default function BestSellerSection({ products }) {
           <div
             ref={scrollContainerRef}
             onScroll={checkScrollability}
-            className="flex gap-4 rounded-2xl overflow-x-auto scrollbar-hide scroll-smooth pb-4"
+            className="flex gap-2 rounded-2xl overflow-x-auto scrollbar-hide scroll-smooth pb-4"
             style={{
               scrollbarWidth: 'none',
               msOverflowStyle: 'none',
@@ -115,7 +115,7 @@ export default function BestSellerSection({ products }) {
             }}
           >
             {cachedProducts.map((product) => (
-              <div key={product._id} className="flex-shrink-0 w-44 md:w-72">
+              <div key={product._id} className="flex-shrink-0 w-40 md:w-72">
                 <ProductCard product={product} />
               </div>
             ))}

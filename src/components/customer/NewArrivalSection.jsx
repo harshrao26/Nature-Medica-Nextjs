@@ -115,7 +115,7 @@ export default function NewArrivalSection({ products }) {
             {cachedProducts.map((product) => (
               <div
                 key={product._id}
-                className="flex-shrink-0 w-44 md:w-72 "
+                className="flex-shrink-0 w-40 md:w-72 "
               >
                 <ProductCard product={product} />
               </div>
