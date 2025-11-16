@@ -171,10 +171,10 @@ export default function OrderDetailsPage() {
         <div className="bg-white rounded-2xl shadow-xl border border-gray-100 p-6 mb-6">
           <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
             <div>
-              <h1 className="text-2xl font-semibold text-gray-900 mb-2">
+              <h1 className="text- font-semibold text-gray-900 mb-2">
                 Order #{order.orderId}
               </h1>
-              <p className="text-gray-600 flex items-center gap-2">
+              <p className="text-gray-600 text-[9px] flex items-center gap-2">
                 <FiClock className="w-4 h-4" />
                 Placed on{" "}
                 {new Date(order.createdAt).toLocaleDateString("en-IN", {
@@ -189,7 +189,7 @@ export default function OrderDetailsPage() {
             <button 
               onClick={handleDownloadInvoice}
               disabled={invoiceLoading}
-              className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#3a5d1e] text-white rounded-xl hover:bg-[#2d4818] transition-all font-semibold text-sm shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
+              className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#3a5d1e] text-white rounded-xl hover:bg-[#2d4818] transition-all font-semibold text-[10px] shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {invoiceLoading ? (
                 <>
@@ -206,7 +206,7 @@ export default function OrderDetailsPage() {
           </div>
 
           {/* AWB Number Display - Prominent */}
-          {order.trackingId && (
+          {/* {order.trackingId && (
             <div className="bg-gradient-to-r from-[#3a5d1e]/10 to-blue-50 rounded-xl p-4 mb-6 border-2 border-[#3a5d1e]/20">
               <div className="flex items-center justify-between gap-4">
                 <div className="flex-1">
@@ -217,7 +217,7 @@ export default function OrderDetailsPage() {
                     </p>
                   </div>
                   <div className="flex items-center gap-3">
-                    <p className="font-mono font-semibold text-xl text-[#3a5d1e]">
+                    <p className="font-mono font-semibold text-[13px] text-[#3a5d1e]">
                       {order.trackingId}
                     </p>
                     <button
@@ -229,22 +229,16 @@ export default function OrderDetailsPage() {
                     </button>
                   </div>
                   {order.courierName && (
-                    <p className="text-sm text-gray-600 mt-1">
+                    <p className="text-[10px] text-gray-600 mt-1">
                       Courier:{" "}
                       <span className="font-semibold">{order.courierName}</span>
                     </p>
                   )}
                 </div>
-                {/* <Link
-                  href={`/track/${order.trackingId}`}
-                  className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#3a5d1e] text-white rounded-xl hover:bg-[#2d4818] transition-all font-semibold text-sm shadow-md hover:shadow-lg"
-                >
-                  Track Shipment
-                  <FiExternalLink className="w-4 h-4" />
-                </Link> */}
+               
               </div>
             </div>
-          )}
+          )} */}
 
           {/* Order Status Timeline */}
           <div className="relative">
@@ -275,7 +269,7 @@ export default function OrderDetailsPage() {
                       <Icon className="w-6 h-6" />
                     </div>
                     <p
-                      className={`mt-3 text-sm font-semibold ${
+                    className={`mt-3 text-[9px] font- ${
                         step.completed ? "text-gray-900" : "text-gray-500"
                       }`}
                     >
@@ -292,7 +286,7 @@ export default function OrderDetailsPage() {
         {order.trackingId && (
           <div className="bg-white rounded-2xl shadow-xl border border-gray-100 p-6 mb-6">
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-2xl font-semibold text-gray-900 flex items-center gap-2">
+              <h2 className="text- font-semibold text-gray-900 flex items-center gap-2">
                 <FiMapPin className="w-6 h-6 text-[#3a5d1e]" />
                 Shipment Timeline
               </h2>
@@ -349,8 +343,8 @@ export default function OrderDetailsPage() {
                                 : "bg-gray-50 border border-gray-200"
                             }`}
                           >
-                            <div className="flex items-start justify-between mb-3">
-                              <h3 className="font-semibold text-gray-900 text-lg">
+                            <div className="flex items-start justify-between mb-2">
+                              <h3 className="font-semibold text-gray-900 text-sm">
                                 {activity.activity}
                               </h3>
                               <span
@@ -370,11 +364,11 @@ export default function OrderDetailsPage() {
                                 )}
                               </span>
                             </div>
-                            <div className="flex items-center gap-2 text-gray-700 text-sm mb-2">
+                <div className="flex items-center gap-2 text-gray-700 text-[10px] mb-2">
                               <FiMapPin className="w-4 h-4" />
                               <p>{activity.location}</p>
                             </div>
-                            <p className="text-xs text-gray-500 font-medium">
+                            <p className="text-[9px] text-gray-500 font-medium">
                               {new Date(activity.date).toLocaleDateString(
                                 "en-IN",
                                 {
@@ -398,7 +392,7 @@ export default function OrderDetailsPage() {
                 <p className="text-gray-500 font-medium mb-2">
                   No tracking updates available yet
                 </p>
-                <p className="text-sm text-gray-400">
+                <p className="text-[10px] text-gray-400">
                   Updates will appear here once your order is shipped
                 </p>
               </div>
@@ -409,7 +403,7 @@ export default function OrderDetailsPage() {
         <div className="grid lg:grid-cols-3 gap-6">
           {/* Order Items */}
           <div className="lg:col-span-2 bg-white rounded-2xl shadow-xl border border-gray-100 p-6">
-            <h2 className="text-xl font-semibold text-gray-900 mb-5 flex items-center gap-2">
+            <h2 className="text-[13px] font-semibold text-gray-900 mb-5 flex items-center gap-2">
               <FiPackage className="w-5 h-5 text-[#3a5d1e]" />
               Order Items ({order.items?.length || 0})
             </h2>
@@ -431,15 +425,15 @@ export default function OrderDetailsPage() {
                       {item.title}
                     </h3>
                     {item.variant && (
-                      <p className="text-sm text-gray-600 mb-2">
+                      <p className="text-[10px] text-gray-600 mb-2">
                         {item.variant}
                       </p>
                     )}
                     <div className="flex items-center justify-between">
-                      <p className="text-sm text-gray-600 bg-gray-100 px-3 py-1 rounded-full">
+                      <p className="text-[10px] text-gray-600 bg-gray-100 px-3 py-1 rounded-full">
                         Qty: {item.quantity}
                       </p>
-                      <p className="font-semibold text-lg text-[#3a5d1e]">
+                      <p className="font-semibold text-[10px] text-[#3a5d1e]">
                         ₹{(item.price * item.quantity).toLocaleString("en-IN")}
                       </p>
                     </div>
@@ -457,8 +451,8 @@ export default function OrderDetailsPage() {
                 <FiMapPin className="text-[#3a5d1e] w-5 h-5" />
                 <h2 className="font-semibold text-gray-900">Shipping Address</h2>
               </div>
-              <div className="text-sm text-gray-600 space-y-2 bg-gray-50 p-4 rounded-xl">
-                <p className="font-semibold text-gray-900 text-base">
+              <div className="text-[10px] text-gray-600 space-y-2 bg-gray-50 p-4 rounded-xl">
+                <p className="font-semibold text-gray-900 text-[11px]">
                   {order.shippingAddress?.name}
                 </p>
                 <p>{order.shippingAddress?.street}</p>
@@ -482,11 +476,11 @@ export default function OrderDetailsPage() {
                 <FiCreditCard className="text-[#3a5d1e] w-5 h-5" />
                 <h2 className="font-semibold text-gray-900">Payment Details</h2>
               </div>
-              <div className="space-y-3 text-sm">
+              <div className="space-y-3 text-[10px]">
                 <div className="flex justify-between items-center bg-gray-50 p-3 rounded-lg">
                   <span className="text-gray-600">Payment Method</span>
                   <span
-                    className={`font-semibold px-3 py-1 rounded-full text-xs ${
+                    className={`font-semibold px-3 py-1 rounded-full text-[9px] ${
                       order.paymentMode === "online"
                         ? "bg-green-100 text-green-700"
                         : "bg-yellow-100 text-yellow-700"
@@ -500,7 +494,7 @@ export default function OrderDetailsPage() {
                 <div className="flex justify-between items-center bg-gray-50 p-3 rounded-lg">
                   <span className="text-gray-600">Payment Status</span>
                   <span
-                    className={`font-semibold px-3 py-1 rounded-full text-xs ${
+                    className={`font-semibold px-3 py-1 rounded-full text-[9px] ${
                       order.paymentStatus === "completed"
                         ? "bg-green-100 text-green-700"
                         : "bg-yellow-100 text-yellow-700"
@@ -511,8 +505,8 @@ export default function OrderDetailsPage() {
                 </div>
                 {order.paymentId && (
                   <div className="bg-gray-50 p-3 rounded-lg">
-                    <span className="text-gray-600 text-xs">Payment ID</span>
-                    <p className="font-mono text-xs text-gray-900 mt-1 break-all">
+                    <span className="text-gray-600 text-[9px]">Payment ID</span>
+                    <p className="font-mono text-[9px] text-gray-900 mt-1 break-all">
                       {order.paymentId}
                     </p>
                   </div>
@@ -523,7 +517,7 @@ export default function OrderDetailsPage() {
             {/* Price Breakdown */}
             <div className="bg-white rounded-2xl shadow-xl border border-gray-100 p-6">
               <h2 className="font-semibold text-gray-900 mb-4">Price Breakdown</h2>
-              <div className="space-y-3 text-sm">
+              <div className="space-y-3 text-[10px]">
                 <div className="flex justify-between items-center">
                   <span className="text-gray-600">Subtotal</span>
                   <span className="font-semibold text-gray-900">
@@ -552,10 +546,10 @@ export default function OrderDetailsPage() {
                   </div>
                 )}
                 <div className="pt-3 border-t-2 border-gray-200 flex justify-between items-center">
-                  <span className="font-semibold text-gray-900 text-base">
+                  <span className="font-semibold text-gray-900 text-[11px]">
                     Total Amount
                   </span>
-                  <span className="font-semibold text-2xl text-[#3a5d1e]">
+                  <span className="font-semibold text- text-[#3a5d1e]">
                     ₹
                     {(order.finalPrice || order.totalPrice)?.toLocaleString(
                       "en-IN"
@@ -569,7 +563,7 @@ export default function OrderDetailsPage() {
 
         {/* Need Help Section */}
         <div className="mt-6 bg-gradient-to-r from-blue-50 to-purple-50 rounded-2xl shadow-xl border border-blue-100 p-6">
-          <h3 className="font-semibold text-gray-900 mb-4 text-lg">
+          <h3 className="font-semibold text-gray-900 mb-4 text-[10px]">
             Need Help with Your Order?
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -581,7 +575,7 @@ export default function OrderDetailsPage() {
                 <FiMapPin className="w-6 h-6 text-white" />
               </div>
               <div>
-                <p className="text-xs text-gray-600">Call Us</p>
+                <p className="text-[9px] text-gray-600">Call Us</p>
                 <p className="font-semibold text-blue-900">+91 8400043322</p>
               </div>
             </a>
@@ -593,7 +587,7 @@ export default function OrderDetailsPage() {
                 <FiCreditCard className="w-6 h-6 text-white" />
               </div>
               <div>
-                <p className="text-xs text-gray-600">Email Us</p>
+                <p className="text-[9px] text-gray-600">Email Us</p>
                 <p className="font-semibold text-purple-900">
                   support@naturemedica.com
                 </p>

@@ -25,6 +25,7 @@ export default function CheckoutPage() {
   const [showAddressForm, setShowAddressForm] = useState(false);
   const [paymentMode, setPaymentMode] = useState('online');
   const [razorpayLoaded, setRazorpayLoaded] = useState(false);
+  const [gatewayCheckStarted, setGatewayCheckStarted] = useState(false);
   const [loading, setLoading] = useState(false);
   const [pincodeLoading, setPincodeLoading] = useState(false);
   const [pincodeError, setPincodeError] = useState('');
@@ -151,6 +152,21 @@ export default function CheckoutPage() {
     }
     fetchUserAddresses();
   }, [isAuthenticated, items?.length, router]);
+
+  useEffect(() => {
+    if (!gatewayCheckStarted) {
+      setGatewayCheckStarted(true);
+
+      // After 2 seconds, if Razorpay script is still not loaded, refresh
+      const timer = setTimeout(() => {
+        if (!razorpayLoaded) {
+          window.location.reload();
+        }
+      }, 2000);
+
+      return () => clearTimeout(timer);
+    }
+  }, [gatewayCheckStarted, razorpayLoaded]);
 
   // Ensure selection stays valid when addresses update
   useEffect(() => {
@@ -699,7 +715,7 @@ const handleAddressInputChange = (e) => {
                   {paymentMode === 'online' && !razorpayLoaded && (
                     <div className="flex items-center gap-2 p-2 bg-yellow-50 border border-yellow-200 rounded-lg">
                       <div className="w-4 h-4 border-2 border-yellow-600 border-t-transparent rounded-full animate-spin"></div>
-                      <p className="text-[10px] text-yellow-800 font-semibold">Loading payment gateway...</p>
+                      <p className="text-[10px] text-yellow-800 font-semibold">Network issue! Please refresh the page</p>
                     </div>
                   )}
                 </div>
