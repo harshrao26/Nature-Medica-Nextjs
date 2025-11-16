@@ -129,7 +129,7 @@ export default function ProductInfo({ product }) {
         <h3 className="font-semibold mb-3 text-[11px]">Product Details:</h3>
         <ul className="space-y-2 text-[11px] text-gray-700">
           <li><strong>Brand:</strong> {product.brand}</li>
-          <li><strong>Category:</strong> {product.category.name}</li>
+          {/* <li><strong>Category:</strong> {product.category.name}</li> */}
           {currentStock > 0 ? (
               <li className="text-[#3A5D1E]"><strong>Availability:</strong> In Stock</li>
           ) : (
