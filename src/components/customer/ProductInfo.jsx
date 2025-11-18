@@ -46,14 +46,14 @@ export default function ProductInfo({ product }) {
             <span className="text-2xl font-bold text-[#3A5D1E]">₹{currentPrice}</span>
           {product.mrp > currentPrice && (
             <>
-              <span className="text-sm text-gray-400 line-through">₹{product.mrp}</span>
+              <span className="text-xl text-gray-700 line-through">₹{product.mrp}</span>
               <span className="bg-red-500 text-white px-1.5 py-0.5 rounded text-[11px] font-semibold">
                 {product.discountPercent}% OFF
               </span>
             </>
           )}
         </div>
-        <p className="text-[11px] text-gray-600">Inclusive of all taxes</p>
+        {/* <p className="text-[11px] text-gray-600">Inclusive of all taxes</p> */}
       </div>
 
       {product.variants && product.variants.length > 0 && (
