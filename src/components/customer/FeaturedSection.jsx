@@ -4,37 +4,16 @@ import { useState, useEffect, useRef } from 'react';
 import ProductCard from '@/components/customer/ProductCard';
 import { FiChevronLeft, FiChevronRight } from 'react-icons/fi';
 
-const CACHE_KEY = 'featuredProductsCache';
-const CACHE_EXPIRY_MS = 5 * 60 * 1000; // 5 minutes
-
 export default function FeaturedSection({ products }) {
   const scrollContainerRef = useRef(null);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(true);
-  const [cachedProducts, setCachedProducts] = useState(null);
-
-  useEffect(() => {
-    // Load from localStorage cache if fresh
-    const cachedDataRaw = localStorage.getItem(CACHE_KEY);
-    if (cachedDataRaw) {
-      const cachedData = JSON.parse(cachedDataRaw);
-      if (cachedData.timestamp && (Date.now() - cachedData.timestamp) < CACHE_EXPIRY_MS) {
-        setCachedProducts(cachedData.products);
-        return;
-      } else {
-        localStorage.removeItem(CACHE_KEY);
-      }
-    }
-    // Save fresh products to cache
-    setCachedProducts(products);
-    localStorage.setItem(CACHE_KEY, JSON.stringify({ products, timestamp: Date.now() }));
-  }, [products]);
 
   useEffect(() => {
     checkScrollability();
     window.addEventListener('resize', checkScrollability);
     return () => window.removeEventListener('resize', checkScrollability);
-  }, [cachedProducts]);
+  }, [products]);
 
   const checkScrollability = () => {
     const container = scrollContainerRef.current;
@@ -56,7 +35,7 @@ export default function FeaturedSection({ products }) {
     setTimeout(checkScrollability, 300);
   };
 
-  if (!cachedProducts || cachedProducts.length === 0) {
+  if (!products || products.length === 0) {
     return null;
   }
 
@@ -111,7 +90,7 @@ export default function FeaturedSection({ products }) {
               WebkitOverflowScrolling: 'touch'
             }}
           >
-            {cachedProducts.map((product) => (
+            {products.map((product) => (
               <div key={product._id} className="flex-shrink-0 w-40 md:w-72 ">
                 <ProductCard product={product} />
               </div>
