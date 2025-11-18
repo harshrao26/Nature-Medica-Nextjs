@@ -183,33 +183,20 @@ export default function Footer() {
               <span className="text-gray-50 font-medium text-xs sm:text-sm">Follow Us:</span>
               <div className="flex gap-2">
                 <a 
-                  href="#" 
+                  href="https://www.facebook.com/profile.php?id=61583180585498" 
                   className="w-7 h-7 rounded-lg bg-white border border-gray-200 hover:border-[#415f2d] hover:bg-[#415f2d] flex items-center justify-center transition-all group shadow-sm"
                   aria-label="Facebook"
                 >
                   <FiFacebook className="w-3.5 h-3.5 text-gray-600 group-hover:text-white transition-colors" />
                 </a>
                 <a 
-                  href="#" 
+                  href="https://www.instagram.com/nature_medica_/" 
                   className="w-7 h-7 rounded-lg bg-white border border-gray-200 hover:border-[#415f2d] hover:bg-[#415f2d] flex items-center justify-center transition-all group shadow-sm"
                   aria-label="Instagram"
                 >
                   <FiInstagram className="w-3.5 h-3.5 text-gray-600 group-hover:text-white transition-colors" />
                 </a>
-                <a 
-                  href="#" 
-                  className="w-7 h-7 rounded-lg bg-white border border-gray-200 hover:border-[#415f2d] hover:bg-[#415f2d] flex items-center justify-center transition-all group shadow-sm"
-                  aria-label="Twitter"
-                >
-                  <FiTwitter className="w-3.5 h-3.5 text-gray-600 group-hover:text-white transition-colors" />
-                </a>
-                <a 
-                  href="#" 
-                  className="w-7 h-7 rounded-lg bg-white border border-gray-200 hover:border-[#415f2d] hover:bg-[#415f2d] flex items-center justify-center transition-all group shadow-sm"
-                  aria-label="YouTube"
-                >
-                  <FiYoutube className="w-3.5 h-3.5 text-gray-600 group-hover:text-white transition-colors" />
-                </a>
+               
               </div>
             </div>
 
