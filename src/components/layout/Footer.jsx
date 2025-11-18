@@ -176,10 +176,7 @@ export default function Footer() {
       <div className="border-t pb-16 md:pb-0 border-gray-200 bg-gradient-to-r from-[#415F2D] to-[#5A8240]">
         <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-8 py-3 sm:py-4">
           <div className="flex flex-col md:flex-row items-center justify-between gap-3 md:gap-4">
-            {/* Copyright */}
-            <p className="text-gray-50 text-center md:text-left text-xs sm:text-sm">
-              © {new Date().getFullYear()} <span className="font-light text-gray-50">NatureMedica</span>. All rights reserved.
-            </p>
+ 
 
             {/* Social Media */}
             <div className="flex items-center gap-3">
@@ -220,15 +217,21 @@ export default function Footer() {
             <div className="flex items-center gap-2 sm:gap-3">
               <span className="text-gray-50 text-xs sm:text-sm font-medium">Payment:</span>
               <div className="flex gap-2">
-                <div className="px-3 py-1.5 bg-white border border-gray-200 rounded-lg text-xs font-light text-gray-700">
-                  UPI
-                </div>
-                <div className="px-3 py-1.5 bg-white border border-gray-200 rounded-lg text-xs font-light text-gray-700">
-                  Cards
-                </div>
-                <div className="px-3 py-1.5 bg-white border border-gray-200 rounded-lg text-xs font-light text-gray-700">
-                  COD
-                </div>
+                <img
+                  src="https://images.icon-icons.com/2699/PNG/512/upi_logo_icon_169316.png"
+                  alt="UPI Logo"
+                  width={40}
+                  
+                  className="object-contain bg-white border border-gray-200 rounded-lg p-1"
+                />
+                <img
+                  src="https://upload.wikimedia.org/wikipedia/commons/0/04/Visa.svg"
+                  alt="Visa Logo"
+                  width={40}
+                  
+                  className="object-contain bg-white border border-gray-200 rounded-lg p-1"
+                />
+                
               </div>
             </div>
           </div>
