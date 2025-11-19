@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { addToCart } from '@/store/slices/cartSlice';
 import { FiShoppingCart,  FiStar, FiCheck } from 'react-icons/fi';
+import { useRouter } from 'next/navigation';
 
 import { ShoppingCart, Zap, Star } from 'lucide-react';
 export default function ProductInfo({ product }) {
@@ -18,6 +19,8 @@ export default function ProductInfo({ product }) {
   const currentPrice = selectedVariant?.price || product.price;
   const currentStock = selectedVariant?.stock || product.stock;
   const [quickBuying, setQuickBuying] = useState(false);
+    const router = useRouter();
+
 
   const handleAddToCart = () => {
     setAdding(true);
