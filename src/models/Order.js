@@ -10,7 +10,11 @@ const OrderSchema = new mongoose.Schema(
     user: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
-      required: true,
+      required: false, // Made optional for guest orders
+    },
+    isGuestOrder: {
+      type: Boolean,
+      default: false,
     },
     userName: {
       type: String,
@@ -37,25 +41,25 @@ const OrderSchema = new mongoose.Schema(
     totalPrice: { type: Number, required: true },
     discount: { type: Number, default: 0 },
     finalPrice: { type: Number, required: true },
-  shippingAddress: {
-  name: { type: String, required: true },
-  phone: { 
-    type: String, 
-    required: true,
-    validate: {
-      validator: function(v) {
-        return /^[6-9][0-9]{9}$/.test(v);
+    shippingAddress: {
+      name: { type: String, required: true },
+      phone: {
+        type: String,
+        required: true,
+        validate: {
+          validator: function (v) {
+            return /^[6-9][0-9]{9}$/.test(v);
+          },
+          message: "Phone must be 10 digits starting with 6, 7, 8, or 9",
+        },
       },
-      message: 'Phone must be 10 digits starting with 6, 7, 8, or 9'
-    }
-  },
-  street: { type: String, required: true },
-  city: { type: String, required: true },
-  state: { type: String, required: true },
-  pincode: { type: String, required: true },
-  landmark: String,
-  type: { type: String, enum: ['home', 'work', 'other'], default: 'home' }
-},
+      street: { type: String, required: true },
+      city: { type: String, required: true },
+      state: { type: String, required: true },
+      pincode: { type: String, required: true },
+      landmark: String,
+      type: { type: String, enum: ["home", "work", "other"], default: "home" },
+    },
 
     paymentMode: {
       type: String,
@@ -83,15 +87,15 @@ const OrderSchema = new mongoose.Schema(
     estimatedDelivery: Date,
     delhiveryWaybill: String,
     phonePeTransactionId: String,
-phonePePaymentId: String,
-ekartReferenceId: {
-  type: String,
-  default: null
-},
-ekartTrackingId: {
-  type: String,
-  default: null
-},
+    phonePePaymentId: String,
+    ekartReferenceId: {
+      type: String,
+      default: null,
+    },
+    ekartTrackingId: {
+      type: String,
+      default: null,
+    },
 
     // Generic shipping fields
     shippingProvider: {

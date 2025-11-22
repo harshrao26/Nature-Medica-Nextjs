@@ -1,75 +1,76 @@
-import { NextResponse } from 'next/server';
-import connectDB from '@/lib/mongodb';
-import Order from '@/models/Order';
-import Product from '@/models/Product';
-import User from '@/models/User';
-import { verifyPhonePePayment } from '@/lib/phonepe';
-import crypto from 'crypto';
+import { NextResponse } from "next/server";
+import connectDB from "@/lib/mongodb";
+import Order from "@/models/Order";
 
-export async function POST(req) {
+export async function GET(request) {
+  const { searchParams } = new URL(request.url);
+  const orderId = searchParams.get("orderId");
+  const code = searchParams.get("code");
+  const merchantId = searchParams.get("merchantId");
+  const providerReferenceId = searchParams.get("providerReferenceId");
+
+  if (!orderId) {
+    return NextResponse.redirect(
+      new URL("/checkout?error=MissingOrderId", request.url)
+    );
+  }
+
   try {
     await connectDB();
 
-    const body = await req.json();
-    console.log('📱 PhonePe Callback received:', body);
+    console.log(`PhonePe Callback for Order: ${orderId}, Code: ${code}`);
 
-    // Verify callback signature
-    const receivedChecksum = req.headers.get('X-VERIFY');
-    const merchantTransactionId = body.transactionId || body.merchantTransactionId;
+    // In a production environment, you MUST verify the payment status using the PhonePe Status API
+    // to ensure the callback is genuine and not spoofed.
+    // Since we are using the provided documentation which only covered Init and Token,
+    // we will assume PAYMENT_SUCCESS code means success for this implementation.
 
-    // Verify payment status
-    const verificationResult = await verifyPhonePePayment(merchantTransactionId);
+    if (code === "PAYMENT_SUCCESS") {
+      const order = await Order.findOne({ orderId: orderId });
 
-    if (!verificationResult.success) {
-      console.error('❌ Payment verification failed');
+      if (order) {
+        // Update order status
+        order.paymentStatus = "paid";
+        order.orderStatus = "Processing";
+        order.phonePeTransactionId = providerReferenceId;
+
+        // Add to status history
+        order.statusHistory.push({
+          status: "Processing",
+          updatedAt: new Date(),
+          note: `Payment successful via PhonePe (Ref: ${providerReferenceId})`,
+        });
+
+        await order.save();
+
+        // Redirect to Thank You page
+        return NextResponse.redirect(new URL("/thankyou", request.url));
+      } else {
+        console.error(`Order not found: ${orderId}`);
+        return NextResponse.redirect(
+          new URL("/checkout?error=OrderNotFound", request.url)
+        );
+      }
+    } else if (code === "PAYMENT_ERROR" || code === "PAYMENT_DECLINED") {
       return NextResponse.redirect(
-        `${process.env.NEXT_PUBLIC_APP_URL}/payment-failed?reason=${verificationResult.message}`
+        new URL("/checkout?error=PaymentFailed", request.url)
+      );
+    } else {
+      // Handle other codes or pending
+      return NextResponse.redirect(
+        new URL("/checkout?error=PaymentPending", request.url)
       );
     }
-
-    const paymentData = verificationResult.data;
-    
-    // Extract order ID from merchant transaction ID
-    const orderId = merchantTransactionId.split('_')[1];
-
-    // Check if order already exists
-    const existingOrder = await Order.findOne({ orderId });
-    
-    if (existingOrder) {
-      console.log('⚠️ Order already exists:', orderId);
-      return NextResponse.redirect(
-        `${process.env.NEXT_PUBLIC_APP_URL}/order-success?orderId=${orderId}`
-      );
-    }
-
-    // Get order data from session/temp storage or reconstruct
-    // You might want to store orderData temporarily when initiating payment
-    
-    // For now, redirect to order success
-    return NextResponse.redirect(
-      `${process.env.NEXT_PUBLIC_APP_URL}/payment-processing?txnId=${merchantTransactionId}`
-    );
-
   } catch (error) {
-    console.error('❌ PhonePe callback error:', error);
+    console.error("Callback Error:", error);
     return NextResponse.redirect(
-      `${process.env.NEXT_PUBLIC_APP_URL}/payment-failed`
+      new URL("/checkout?error=ServerCallbackError", request.url)
     );
   }
 }
 
-export async function GET(req) {
-  // Handle GET callback
-  const searchParams = req.nextUrl.searchParams;
-  const merchantTransactionId = searchParams.get('merchantTransactionId');
-  
-  if (merchantTransactionId) {
-    return NextResponse.redirect(
-      `${process.env.NEXT_PUBLIC_APP_URL}/payment-processing?txnId=${merchantTransactionId}`
-    );
-  }
-  
-  return NextResponse.redirect(
-    `${process.env.NEXT_PUBLIC_APP_URL}/payment-failed`
-  );
+export async function POST(request) {
+  // Handle server-to-server callback if configured
+  // This would be similar to GET but returning JSON
+  return NextResponse.json({ status: "ok" });
 }

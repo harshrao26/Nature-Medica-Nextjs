@@ -1,13 +1,19 @@
 "use client";
 import Image from "next/image";
 import React, { useEffect, useRef, useState } from "react";
+import { useDispatch } from "react-redux";
+import { clearCart } from "@/store/slices/cartSlice";
 import { ConfettiButton } from "@/components/ui/confetti";
 
 const page = () => {
+  const dispatch = useDispatch();
   const confettiRef = useRef(null);
   const [showMessage, setShowMessage] = useState(false);
 
   useEffect(() => {
+    // Clear the cart when thank you page loads
+    dispatch(clearCart());
+    
     if (confettiRef.current) {
       let count = 0;
       const interval = setInterval(() => {
@@ -19,7 +25,7 @@ const page = () => {
         }
       }, 400); // slightly faster icntervals for livelier effect
     }
-  }, []);
+  }, [dispatch]);
 
   return (
     <div className="min-h-sc reen pt-24 pb-24 flex flex-col items-center justify-center text-center space-y-8 bg-gradient-to-b from-white to-green-50">

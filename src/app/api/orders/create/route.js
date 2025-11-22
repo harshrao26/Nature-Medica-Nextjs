@@ -3,26 +3,10 @@ import connectDB from '@/lib/mongodb';
 import Order from '@/models/Order';
 import Product from '@/models/Product';
 import User from '@/models/User';
-import { requireAuth } from '@/middleware/auth';
-import Razorpay from 'razorpay';
-
-const razorpay = new Razorpay({
-  key_id: process.env.RAZORPAY_KEY_ID,
-  key_secret: process.env.RAZORPAY_KEY_SECRET,
-});
 
 export async function POST(req) {
   try {
-    const authData = await requireAuth(req);
     await connectDB();
-
-    const user = await User.findById(authData.userId).lean();
-
-    if (!user) {
-      return NextResponse.json({ error: 'User not found' }, { status: 404 });
-    }
-
-    console.log('📦 Creating order for user:', user.email);
 
     const {
       items,
@@ -31,24 +15,61 @@ export async function POST(req) {
       finalPrice,
       shippingAddress,
       paymentMode,
-      couponCode
+      couponCode,
+      isGuest,
+      guestEmail,
+      guestName
     } = await req.json();
 
-    // Validate items
+    let user = null;
+    let userId = null;
+    let userName = guestName || 'Guest';
+    let userEmail = guestEmail || '';
+
+    // If not a guest user, try to get authenticated user
+    if (!isGuest) {
+      try {
+        const { requireAuth } = await import('@/middleware/auth');
+        const authData = await requireAuth(req);
+        user = await User.findById(authData.userId).lean();
+        
+        if (user) {
+          userId = user._id;
+          userName = user.name;
+          userEmail = user.email;
+        }
+      } catch (authError) {
+        // If auth fails but isGuest is false, it means they were trying to authenticate
+        // We can continue as guest if guest details are provided
+        if (!guestEmail || !guestName) {
+          return NextResponse.json({ 
+            error: 'Authentication required or provide guest details' 
+          }, { status: 401 });
+        }
+      }
+    }
+
+    // Validation
     if (!items || items.length === 0) {
       return NextResponse.json({ error: 'No items in order' }, { status: 400 });
     }
 
-    // Validate shipping address
-    if (!shippingAddress || !shippingAddress.name || !shippingAddress.phone || 
-        !shippingAddress.street || !shippingAddress.city || !shippingAddress.state || 
-        !shippingAddress.pincode) {
+    if (!shippingAddress?.name || !shippingAddress?.phone || 
+        !shippingAddress?.street || !shippingAddress?.city || 
+        !shippingAddress?.state || !shippingAddress?.pincode) {
       return NextResponse.json({ 
         error: 'Complete shipping address is required'
       }, { status: 400 });
     }
 
-    // Validate stock
+    // For guest users, validate email
+    if (isGuest && !userEmail) {
+      return NextResponse.json({ 
+        error: 'Email is required for guest checkout' 
+      }, { status: 400 });
+    }
+
+    // Stock validation
     for (const item of items) {
       const product = await Product.findById(item.product);
       if (!product) {
@@ -63,18 +84,17 @@ export async function POST(req) {
       }
     }
 
-    // Generate order ID
+    // Generate Order ID
     const orderCount = await Order.countDocuments();
     const orderId = `NM${String(orderCount + 1).padStart(6, '0')}`;
 
-    console.log('✅ Generated orderId:', orderId);
-
-    // Prepare base order data
-    const orderBaseData = {
+    // Prepare order data
+    const orderData = {
       orderId,
-      user: user._id,
-      userName: user.name,
-      userEmail: user.email,
+      user: userId, // null for guest users
+      userName,
+      userEmail,
+      isGuestOrder: isGuest || false,
       items: items.map(item => ({
         product: item.product,
         title: item.title,
@@ -97,65 +117,28 @@ export async function POST(req) {
         type: shippingAddress.type || 'home'
       },
       paymentMode,
-      couponCode: couponCode || null
+      paymentStatus: 'pending',
+      orderStatus: 'Pending',
+      couponCode: couponCode || null,
+      statusHistory: [{
+        status: 'Pending',
+        updatedAt: new Date(),
+        note: isGuest ? 'Guest order created' : 'Order created'
+      }]
     };
 
-    // For ONLINE payment (Razorpay)
-    if (paymentMode === 'online') {
-      const razorpayOrder = await razorpay.orders.create({
-        amount: finalPrice * 100,
-        currency: 'INR',
-        receipt: orderId,
-        notes: {
-          orderId: orderId,
-          userId: user._id.toString(),
-          userEmail: user.email
-        }
-      });
+    // Create order in database
+    const newOrder = await Order.create(orderData);
 
-      console.log('💳 Razorpay order created:', razorpayOrder.id);
+    console.log(`✅ ${isGuest ? 'Guest' : 'User'} order created:`, newOrder.orderId);
 
-      return NextResponse.json({
-        success: true,
-        razorpayOrderId: razorpayOrder.id,
-        orderId: orderId,
-        amount: finalPrice,
-        orderData: orderBaseData
-      });
-    } 
-    
-    // For COD
-    else {
-      const order = await Order.create({
-        ...orderBaseData,
-        paymentStatus: 'pending',
-        orderStatus: 'Processing',
-        statusHistory: [{
-          status: 'Processing',
-          updatedAt: new Date(),
-          note: 'Order placed - Cash on Delivery'
-        }]
-      });
-
-      console.log('✅ COD Order created:', order.orderId);
-
-      // Update product stock
-      for (const item of items) {
-        await Product.findByIdAndUpdate(
-          item.product,
-          { $inc: { stock: -item.quantity } }
-        );
-      }
-
-      return NextResponse.json({
-        success: true,
-        order: {
-          orderId: order.orderId,
-          finalPrice: order.finalPrice,
-          _id: order._id.toString()
-        }
-      });
-    }
+    // Return order details for frontend
+    return NextResponse.json({
+      success: true,
+      orderId: newOrder.orderId,
+      amount: newOrder.finalPrice,
+      mobileNumber: shippingAddress.phone
+    });
 
   } catch (error) {
     console.error('❌ Create order error:', error);

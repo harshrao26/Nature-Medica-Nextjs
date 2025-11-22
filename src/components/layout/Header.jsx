@@ -289,7 +289,6 @@ export default function SearchFirstHeader() {
           scrollbar-width: none;
         }
       `}</style>
-      <NewsletterPopup />
     </header>
   );
 }

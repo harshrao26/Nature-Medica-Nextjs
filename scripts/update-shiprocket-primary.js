@@ -95,7 +95,7 @@ async function updatePrimaryAddress() {
     const updatedAddress = {
       pickup_location: 'Primary', // Keep the name as Primary
       name: 'Nature Medica',
-      email: process.env.SHIPROCKET_EMAIL || 'info@naturemedica.com',
+      email: process.env.SHIPROCKET_EMAIL || 'support@naturemedica.com',
       phone: '8400043322',
       address: '1st Floor, LHPS Building, Friends Colony, Sector-7',
       address_2: 'Kamla Nehru Nagar, Vikas Nagar',
