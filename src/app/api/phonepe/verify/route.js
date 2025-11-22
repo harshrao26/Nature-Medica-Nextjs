@@ -3,7 +3,7 @@ import connectDB from '@/lib/mongodb';
 import Order from '@/models/Order';
 import Product from '@/models/Product';
 import User from '@/models/User';
-import { verifyPhonePePayment } from '@/lib/phonepe';
+// import { verifyPhonePePayment } from '@/lib/phonepe';
 import { requireAuth } from '@/middleware/auth';
 
 export async function POST(req) {
@@ -18,7 +18,8 @@ export async function POST(req) {
     console.log('💳 Verifying PhonePe payment:', merchantTransactionId);
 
     // Verify payment with PhonePe
-    const verificationResult = await verifyPhonePePayment(merchantTransactionId);
+    // const verificationResult = await verifyPhonePePayment(merchantTransactionId);
+    const verificationResult = "";
 
     if (!verificationResult.success || verificationResult.code !== 'PAYMENT_SUCCESS') {
       console.error('❌ Payment not successful:', verificationResult.message);
