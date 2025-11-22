@@ -50,7 +50,7 @@ export async function POST(req) {
         hsn: ''
       })),
       payment_method: order.paymentMode === 'cod' ? 'COD' : 'Prepaid',
-      shipping_charges: 0,
+      shipping_charges: 49,
       giftwrap_charges: 0,
       transaction_charges: 0,
       total_discount: order.discount || 0,

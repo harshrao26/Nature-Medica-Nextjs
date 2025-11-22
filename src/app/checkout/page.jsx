@@ -365,7 +365,7 @@ export default function CheckoutPage() {
   // Allow rendering for both authenticated users and guests, just check for items
   if (items.length === 0) return null;
 
-  const deliveryCharge = 30;
+  const deliveryCharge = 49;
   
   // Calculate total MRP and savings
   const totalMRP = items.reduce((sum, item) => {
