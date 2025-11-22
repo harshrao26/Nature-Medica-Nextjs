@@ -261,11 +261,19 @@ export default function CheckoutPage() {
 
   const handleRemoveItem = (productId, variant) => {
     dispatch(removeFromCart({ productId, variant }));
+    // Remove coupon when cart is modified
+    if (couponCode) {
+      dispatch(removeCoupon());
+     }
   };
 
   const handleUpdateQuantity = (productId, variant, newQuantity) => {
     if (newQuantity < 1) return;
     dispatch(updateQuantity({ productId, variant, quantity: newQuantity }));
+    // Remove coupon when cart is modified
+    if (couponCode) {
+      dispatch(removeCoupon());
+     }
   };
 
   const handlePlaceOrder = async () => {
@@ -366,16 +374,16 @@ export default function CheckoutPage() {
   if (items.length === 0) return null;
 
   const deliveryCharge = 49;
-  
+
   // Calculate total MRP and savings
   const totalMRP = items.reduce((sum, item) => {
     const mrp = item.product.mrp || item.price; // Fallback to price if MRP not available
     return sum + (mrp * item.quantity);
   }, 0);
-  
+
   const mrpSavings = totalMRP - totalPrice; // Savings from MRP to selling price
   const totalSavings = mrpSavings + discount; // Total savings including coupon discount
-  
+
   const finalPrice = totalPrice - discount + deliveryCharge;
 
   return (

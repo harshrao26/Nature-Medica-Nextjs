@@ -98,7 +98,7 @@ export default function CartPage() {
     );
   }
 
-  const finalPrice = cartTotal - discount + 30;
+  const finalPrice = cartTotal - discount + 49;
   const savings = discount;
 
   return (
@@ -263,7 +263,7 @@ export default function CartPage() {
 
                   <div className="flex justify-between text-sm text-gray-600">
                     <span>Shipping</span>
-                    <span className="font-medium text-green-600">₹30</span>
+                    <span className="font-medium text-green-600">₹49</span>
                   </div>
 
                   <div className="pt-4 border-t border-gray-200">

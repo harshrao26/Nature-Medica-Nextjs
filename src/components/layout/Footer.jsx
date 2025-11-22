@@ -5,7 +5,7 @@ import logo from '@/assets/logo.webp';
 
 export default function Footer() {
   return (
-    <footer className="bg-white border-t  border-gray-200">
+    <footer className="bg-yellow-50 ] border-t  border-gray-200">
      
 
       {/* Main Footer Content */}
